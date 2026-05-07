@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Verity — Triunfo | Destiny 2</title>
+<style>
+  :root {
+    --bg-deep:        #0a0d14;
+    --bg-panel:       #131822;
+    --bg-elev:        #1c2230;
+    --gold:           #d4a64a;
+    --gold-dim:       #8a6f30;
+    --gold-glow:      rgba(212,166,74,0.25);
+    --witness-purple: #8a4fff;
+    --text:           #e6e9ef;
+    --text-dim:       #8b93a3;
+    --circle:         #4fb3ff;
+    --square:         #ff8a4f;
+    --triangle:       #4fffb3;
+    --danger:         #ff4f4f;
+    --success:        #4fff8a;
+    --border:         #2a3142;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(138,79,255,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(212,166,74,0.08), transparent 40%),
+      var(--bg-deep);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    padding: 30px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 30px;
+  }
+  header h1 {
+    font-size: 2.4rem;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(212,166,74,0.3);
+    margin-bottom: 8px;
+  }
+  header .subtitle { color: var(--text-dim); font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; }
+  header .raid-name { color: var(--witness-purple); font-size: 1.1rem; margin-top: 10px; letter-spacing: 1px; }
+  .badge-triumph {
+    display: inline-block; margin-top: 12px;
+    background: rgba(212,166,74,0.12); color: var(--gold);
+    border: 1px solid rgba(212,166,74,0.3);
+    padding: 5px 18px; border-radius: 20px;
+    font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+  }
+
+  .panel {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 25px; margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .panel h2 {
+    color: var(--gold); font-size: 1.3rem; margin-bottom: 18px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .player-selection {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 20px;
+  }
+  @media (max-width:700px) { .player-selection { grid-template-columns: 1fr; } }
+
+  .player-card {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px; text-align: center; transition: all 0.2s;
+  }
+  .player-card.complete { border-color: var(--gold); box-shadow: 0 0 20px rgba(212,166,74,0.15); }
+  .player-card .position {
+    color: var(--gold); font-size: 0.85rem; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 3px; font-weight: 700;
+  }
+  .card-label {
+    color: var(--text-dim); font-size: 0.78rem; margin-bottom: 12px;
+    min-height: 22px; display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .section-title {
+    font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 2px; margin: 12px 0 6px;
+    border-top: 1px solid var(--border); padding-top: 10px; text-align: left;
+  }
+
+  .shape-row { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+  .shape-btn {
+    width: 56px; height: 56px; border: 2px solid var(--border); background: var(--bg-deep);
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; padding: 6px; flex-shrink: 0;
+  }
+  .shape-btn:hover:not(:disabled) { border-color: var(--gold-dim); transform: translateY(-2px); }
+  .shape-btn:disabled { opacity: 0.18; cursor: not-allowed; transform: none; }
+  .shape-btn.active { border-color: var(--gold); background: rgba(212,166,74,0.1); box-shadow: 0 0 14px var(--gold-glow); }
+  .shape-btn svg { width: 100%; height: 100%; }
+
+  .state-badge {
+    display: inline-block; padding: 2px 9px; border-radius: 10px;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .state-badge.dup { background: rgba(79,179,255,0.15); color: var(--circle); }
+  .state-badge.mix { background: rgba(255,138,79,0.15); color: var(--square); }
+
+  .counter-bar {
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 20px; display: flex; justify-content: center; align-items: center;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 25px; font-size: 0.85rem;
+  }
+  .counter-item { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
+  .counter-item .count { font-weight: 700; font-size: 1rem; }
+  .count.circle { color: var(--circle); } .count.square { color: var(--square); } .count.triangle { color: var(--triangle); }
+  .count.full { color: var(--success) !important; }
+  .counter-sep { color: var(--border); font-size: 1.2rem; }
+  .scenario-line { text-align: center; color: var(--success); font-weight: 700; letter-spacing: 1px; font-size: 0.85rem; width: 100%; }
+
+  .result-panel {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .result-panel h2 {
+    color: var(--gold); font-size: 1.3rem; margin-bottom: 18px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .wait-state { text-align: center; color: var(--text-dim); padding: 35px 20px; font-size: 0.9rem; letter-spacing: 1px; }
+  .wait-state .wait-icon { font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3; }
+  .wait-state small { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; font-size: 0.78rem; opacity: 0.6; }
+
+  .rsec { margin-bottom: 22px; }
+  .rsec-title {
+    color: var(--text-dim); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+  }
+  .rsec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .summary-block {
+    background: var(--bg-elev); border-left: 3px solid var(--witness-purple);
+    border-radius: 0 6px 6px 0; padding: 14px 20px; margin-bottom: 4px;
+  }
+  .summary-row {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    border-bottom: 1px dashed var(--border); flex-wrap: wrap;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .pos { color: var(--gold); min-width: 80px; font-weight: 700; text-transform: uppercase; font-size: 0.82rem; letter-spacing: 1px; }
+  .summary-row .arrow { color: var(--text-dim); font-size: 0.82rem; }
+
+  .alert-box {
+    padding: 12px 16px; border-radius: 6px; margin: 8px 0;
+    font-size: 0.85rem; line-height: 1.6; border-left: 3px solid;
+  }
+  .alert-box.gold   { background: rgba(212,166,74,0.07); border-color: var(--gold); color: #f0d890; }
+  .alert-box.info   { background: rgba(79,179,255,0.07); border-color: var(--circle); color: #a8d8ff; }
+  .alert-box.ok     { background: rgba(79,255,138,0.07); border-color: var(--success); color: #a8ffc8; }
+
+  .player-instruction {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 6px; padding: 18px; margin-bottom: 14px; border-left: 4px solid var(--border);
+  }
+  .player-instruction.r1 { border-left-color: var(--circle); }
+  .player-instruction.r2 { border-left-color: var(--square); }
+
+  .instr-header {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .instr-header .title { font-size: 1.05rem; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+
+  .round-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .round-badge.r1 { background: rgba(79,179,255,0.15); color: var(--circle); border: 1px solid rgba(79,179,255,0.3); }
+  .round-badge.r2 { background: rgba(255,138,79,0.15); color: var(--square); border: 1px solid rgba(255,138,79,0.3); }
+
+  .steps { list-style: none; counter-reset: step; }
+  .steps li {
+    counter-increment: step; position: relative;
+    padding: 11px 12px 11px 48px; margin-bottom: 6px;
+    background: var(--bg-deep); border-radius: 6px;
+    border: 1px solid transparent; transition: border-color 0.2s;
+    font-size: 0.88rem; line-height: 1.5;
+  }
+  .steps li:hover { border-color: var(--gold-dim); }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 26px; height: 26px; background: var(--gold); color: var(--bg-deep); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem;
+  }
+  .steps li strong { color: var(--gold); }
+  .steps li .send  { color: var(--danger); font-weight: 700; }
+  .steps li .recv  { color: var(--success); font-weight: 700; }
+  .steps li .note  { color: var(--text-dim); font-size: 0.82rem; }
+  .steps .inline-shape { display: inline-flex; vertical-align: middle; width: 20px; height: 20px; margin: 0 3px; }
+
+  .round-sep {
+    display: flex; align-items: center; gap: 12px; color: var(--text-dim);
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin: 10px 0;
+  }
+  .round-sep::before, .round-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .badge-circle   { background: rgba(79,179,255,0.2); color: var(--circle); }
+  .badge-square   { background: rgba(255,138,79,0.2); color: var(--square); }
+  .badge-triangle { background: rgba(79,255,179,0.2); color: var(--triangle); }
+
+  footer { text-align: center; color: var(--text-dim); font-size: 0.82rem; padding: 20px; margin-top: 30px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Calculadora Verity</h1>
+    <div class="subtitle">Encontro 3 — Limiar da Salvação</div>
+    <div class="raid-name">Destiny 2 · The Final Shape</div>
+    <span class="badge-triumph">🏆 Modo Triunfo · Distribuição Igual</span>
+  </header>
+
+  <section class="panel">
+    <h2>Formas dos Jogadores Internos</h2>
+    <p style="color:var(--text-dim); margin-bottom:6px;">
+      Para cada jogador, selecione a <strong style="color:var(--gold)">Estátua</strong> (identidade 2D) e os dois
+      <strong style="color:var(--gold)">Símbolos de Parede</strong> visíveis na sala.
+    </p>
+    <p style="color:var(--text-dim); font-size:0.83rem;"><em>Regra do Triunfo: cada forma deve aparecer exatamente 2× no total das paredes (●×2 ■×2 ▲×2).</em></p>
+    <div class="player-selection" id="playerCards"></div>
+  </section>
+
+  <div class="counter-bar" id="counterBar">
+    <div class="counter-item"><span id="svg-c-sm"></span><span class="count circle" id="cnt-c">0/2</span></div>
+    <div class="counter-sep">·</div>
+    <div class="counter-item"><span id="svg-s-sm"></span><span class="count square" id="cnt-s">0/2</span></div>
+    <div class="counter-sep">·</div>
+    <div class="counter-item"><span id="svg-t-sm"></span><span class="count triangle" id="cnt-t">0/2</span></div>
+    <div id="scenario-line" class="scenario-line" style="display:none"></div>
+  </div>
+
+  <div class="result-panel">
+    <h2>Solução — Ordem de Execução</h2>
+    <div id="resultContent">
+      <div class="wait-state"><span class="wait-icon">◈</span>Selecione as formas acima para gerar o passo a passo...</div>
+    </div>
+  </div>
+
+  <footer>Feito para Guardiões · Calculadora Verity Triunfo · Use como referência durante o encontro.</footer>
+</div>
+
+<script>
+const SHAPES = ['circle','square','triangle'];
+const NAME   = { circle:'Círculo', square:'Quadrado', triangle:'Triângulo' };
+const POS    = ['left','middle','right'];
+const LABEL  = { left:'Esquerda', middle:'Centro', right:'Direita' };
+
+let base = { left:null, middle:null, right:null };
+let sym1 = { left:null, middle:null, right:null };
+let sym2 = { left:null, middle:null, right:null };
+
+function svg2D(shape, size=40) {
+  const C = { circle:'#4fb3ff', square:'#ff8a4f', triangle:'#4fffb3' };
+  const c=C[shape], s=size;
+  if (shape==='circle')    return `<svg viewBox="0 0 40 40" width="${s}" height="${s}"><circle cx="20" cy="20" r="14" fill="${c}" opacity="0.25" stroke="${c}" stroke-width="2.5"/></svg>`;
+  if (shape==='square')    return `<svg viewBox="0 0 40 40" width="${s}" height="${s}"><rect x="7" y="7" width="26" height="26" fill="${c}" opacity="0.25" stroke="${c}" stroke-width="2.5"/></svg>`;
+  if (shape==='triangle')  return `<svg viewBox="0 0 40 40" width="${s}" height="${s}"><polygon points="20,5 35,33 5,33" fill="${c}" opacity="0.25" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+}
+const IS = s => `<span class="inline-shape">${svg2D(s,20)}</span>`;
+const B  = s => `<span class="badge badge-${s}">${NAME[s]}</span>`;
+
+function buildCards() {
+  document.getElementById('playerCards').innerHTML = POS.map(pos => `
+    <div class="player-card" id="card-${pos}">
+      <div class="position">${LABEL[pos]}</div>
+      <div class="card-label" id="lbl-${pos}">—</div>
+      <div class="section-title">🗿 Estátua</div>
+      <div class="shape-row">${SHAPES.map(s=>`<button class="shape-btn" id="base-${pos}-${s}" onclick="click2('base','${pos}','${s}')">${svg2D(s,40)}</button>`).join('')}</div>
+      <div class="section-title">🧱 Símbolo de Parede 1</div>
+      <div class="shape-row">${SHAPES.map(s=>`<button class="shape-btn" id="sym1-${pos}-${s}" onclick="click2('sym1','${pos}','${s}')">${svg2D(s,40)}</button>`).join('')}</div>
+      <div class="section-title">🧱 Símbolo de Parede 2</div>
+      <div class="shape-row">${SHAPES.map(s=>`<button class="shape-btn" id="sym2-${pos}-${s}" onclick="click2('sym2','${pos}','${s}')">${svg2D(s,40)}</button>`).join('')}</div>
+    </div>`).join('');
+  document.getElementById('svg-c-sm').innerHTML = svg2D('circle',18);
+  document.getElementById('svg-s-sm').innerHTML = svg2D('square',18);
+  document.getElementById('svg-t-sm').innerHTML = svg2D('triangle',18);
+}
+
+function walls(p) { const w=[]; if(sym1[p]) w.push(sym1[p]); if(sym2[p]) w.push(sym2[p]); return w; }
+function countWalls() { const c={circle:0,square:0,triangle:0}; POS.forEach(p=>walls(p).forEach(s=>c[s]++)); return c; }
+function remaining(s) { return 2-countWalls()[s]; }
+function isValid() {
+  if (POS.some(p=>!base[p])) return false;
+  if (POS.some(p=>walls(p).length!==2)) return false;
+  const c=countWalls(); return c.circle===2&&c.square===2&&c.triangle===2;
+}
+function isDup(p) { const w=walls(p); return w.length===2&&w[0]===w[1]; }
+function getScenario() { const d=POS.filter(p=>isDup(p)).length; return d===3?1:d===1?2:3; }
+
+function click2(type,pos,shape) {
+  if(type==='base') base[pos]=(base[pos]===shape)?null:shape;
+  else if(type==='sym1') sym1[pos]=(sym1[pos]===shape)?null:shape;
+  else sym2[pos]=(sym2[pos]===shape)?null:shape;
+  update();
+}
+
+function update() {
+  const cnt=countWalls();
+  POS.forEach(pos=>{
+    ['base','sym1','sym2'].forEach(t=>{
+      const val=t==='base'?base[pos]:t==='sym1'?sym1[pos]:sym2[pos];
+      SHAPES.forEach(s=>{
+        const btn=document.getElementById(`${t}-${pos}-${s}`);
+        if(!btn) return;
+        btn.classList.toggle('active',val===s);
+        if(t!=='base') btn.disabled=val!==s&&remaining(s)<=0;
+      });
+    });
+    const w=walls(pos), dup=isDup(pos);
+    const lbl=document.getElementById(`lbl-${pos}`);
+    if(base[pos]) {
+      const badge=w.length===2?`<span class="state-badge ${dup?'dup':'mix'}">${dup?'Duplicado':'Misturado'}</span>`:'';
+      lbl.innerHTML=`${svg2D(base[pos],18)} ${NAME[base[pos]]} ${badge}`;
+    } else { lbl.textContent='—'; }
+    document.getElementById(`card-${pos}`).classList.toggle('complete', isValid()&&w.length===2&&!!base[pos]);
+  });
+
+  ['circle','square','triangle'].forEach(s=>{
+    const id=s==='circle'?'c':s==='square'?'s':'t';
+    const el=document.getElementById(`cnt-${id}`);
+    el.textContent=cnt[s]+'/2';
+    el.className=`count ${s}${cnt[s]===2?' full':''}`;
+  });
+
+  const sl=document.getElementById('scenario-line');
+  if(isValid()){
+    const sc=getScenario();
+    sl.style.display='block';
+    sl.textContent=`✓ Cenário ${sc}: ${sc===1?'Todos Duplicados':sc===2?'1 Duplicado, 2 Misturados':'Todos Misturados'}`;
+  } else sl.style.display='none';
+
+  renderResult();
+}
+
+function renderResult() {
+  const el=document.getElementById('resultContent');
+  if(!isValid()){
+    const c=countWalls();
+    let msg='Selecione as formas acima...';
+    if(POS.some(p=>!base[p])) msg='Selecione as 3 estátuas...';
+    else if(POS.some(p=>walls(p).length<2)) msg='Selecione 2 símbolos de parede por jogador...';
+    else msg='Ajuste os símbolos para 2× cada forma nas paredes...';
+    el.innerHTML=`<div class="wait-state"><span class="wait-icon">◈</span>${msg}<small>${svg2D('circle',16)} ${c.circle}/2 ${svg2D('square',16)} ${c.square}/2 ${svg2D('triangle',16)} ${c.triangle}/2</small></div>`;
+    return;
+  }
+  const sc=getScenario();
+  const has={}; POS.forEach(p=>has[p]=walls(p));
+  let h='';
+
+  h+=`<div class="alert-box gold">🏆 <strong>TRIUNFO — Distribuição Igual</strong><br>
+    <span style="font-size:.85rem">Cenário ${sc}: ${sc===1?'Todos Duplicados':sc===2?'1 Duplicado, 2 Misturados':'Todos Misturados'}</span></div>`;
+
+  // Summary
+  h+='<div class="rsec"><div class="rsec-title">Resumo dos Jogadores</div><div class="summary-block">';
+  POS.forEach(pos=>{
+    h+=`<div class="summary-row">
+      <span class="pos">${LABEL[pos]}</span>
+      ${svg2D(base[pos],22)} ${B(base[pos])}
+      <span class="arrow">·</span>
+      <span style="color:var(--text-dim);font-size:.82rem">Paredes:</span>
+      ${has[pos].map(s=>svg2D(s,20)).join('')}
+      <span class="state-badge ${isDup(pos)?'dup':'mix'}">${isDup(pos)?'Duplicado':'Misturado'}</span>
+    </div>`;
+  });
+  h+='</div></div>';
+
+  h+='<div class="rsec"><div class="rsec-title">Ordem de Execução</div>';
+
+  if(sc===1) {
+    h+=`<div class="alert-box info">📌 <strong>Cenário 1 — Todos Duplicados</strong><br>
+      Cada jogador envia sua forma à <strong>direita</strong> (Rodada 1), depois à <strong>esquerda</strong> (Rodada 2).</div>`;
+    h+=`<div class="player-instruction r1"><div class="instr-header"><span class="title">Rodada 1</span><span class="round-badge r1">Depositar à Direita</span></div><ol class="steps">
+      <li><strong>P1 (Esquerda)</strong> ${IS(base.left)} envia ${B(base.left)} → <strong>P2 (Centro)</strong>. <span class="note">— 1º Cavaleiro</span></li>
+      <li><strong>P2 (Centro)</strong> ${IS(base.middle)} envia ${B(base.middle)} → <strong>P3 (Direita)</strong>. <span class="note">— 1º Cavaleiro</span></li>
+      <li><strong>P3 (Direita)</strong> ${IS(base.right)} envia ${B(base.right)} → <strong>P1 (Esquerda)</strong>. <span class="note">— 1º Cavaleiro</span></li>
+    </ol></div>`;
+    h+='<div class="round-sep">Aguardar Todos</div>';
+    h+=`<div class="player-instruction r2"><div class="instr-header"><span class="title">Rodada 2</span><span class="round-badge r2">Depositar à Esquerda</span></div><ol class="steps">
+      <li><strong>P1 (Esquerda)</strong> ${IS(base.left)} envia ${B(base.left)} → <strong>P3 (Direita)</strong>. <span class="note">— 2º Cavaleiro</span></li>
+      <li><strong>P3 (Direita)</strong> ${IS(base.right)} envia ${B(base.right)} → <strong>P2 (Centro)</strong>. <span class="note">— 2º Cavaleiro</span></li>
+      <li><strong>P2 (Centro)</strong> ${IS(base.middle)} envia ${B(base.middle)} → <strong>P1 (Esquerda)</strong>. <span class="note">— 2º Cavaleiro</span></li>
+    </ol></div>`;
+
+  } else if(sc===2) {
+    const dp=POS.find(p=>isDup(p)), mx=POS.filter(p=>p!==dp);
+    const m1=mx[0], m2=mx[1];
+    const m1c=has[m1].find(s=>s===base[m1])||has[m1][0];
+    const m1n=has[m1].find(s=>s!==base[m1])||has[m1][1];
+    const m2c=has[m2].find(s=>s===base[m2])||has[m2][0];
+    const m2n=has[m2].find(s=>s!==base[m2])||has[m2][1];
+    h+=`<div class="alert-box info">📌 <strong>Cenário 2 — 1 Duplicado, 2 Misturados</strong><br>
+      Misturado envia seu <em>Correspondente</em> ao outro Misturado e seu <em>Não-Correspondente</em> ao Duplicado.</div>`;
+    h+=`<div class="player-instruction r1"><div class="instr-header"><span class="title">Rodada 1</span><span class="round-badge r1">R1</span></div><ol class="steps">
+      <li><strong>${LABEL[m1]}</strong> ${IS(m1c)} envia ${B(m1c)} <span class="recv">(Correspondente)</span> → <strong>${LABEL[m2]}</strong>.</li>
+      <li><strong>${LABEL[m1]}</strong> ${IS(m1n)} envia ${B(m1n)} <span class="send">(Não-Corresp.)</span> → <strong>${LABEL[dp]}</strong> (Duplicado).</li>
+      <li><strong>${LABEL[dp]}</strong> ${IS(base[dp])} envia ${B(base[dp])} → <strong>${LABEL[m1]}</strong>.</li>
+    </ol></div>`;
+    h+='<div class="round-sep">Aguardar Todos</div>';
+    h+=`<div class="player-instruction r2"><div class="instr-header"><span class="title">Rodada 2</span><span class="round-badge r2">R2</span></div><ol class="steps">
+      <li><strong>${LABEL[dp]}</strong> ${IS(base[dp])} envia ${B(base[dp])} → <strong>${LABEL[m2]}</strong>.</li>
+      <li><strong>${LABEL[m2]}</strong> ${IS(m2c)} envia ${B(m2c)} <span class="recv">(Correspondente)</span> → <strong>${LABEL[m1]}</strong>.</li>
+      <li><strong>${LABEL[m2]}</strong> ${IS(m2n)} envia ${B(m2n)} <span class="send">(Não-Corresp.)</span> → <strong>${LABEL[dp]}</strong> (Duplicado).</li>
+    </ol></div>`;
+
+  } else {
+    const tgt={};
+    POS.forEach(pos=>{ const miss=SHAPES.find(s=>!has[pos].includes(s)); const t=POS.find(p=>base[p]===miss); tgt[pos]=t||POS[(POS.indexOf(pos)+1)%3]; });
+    h+=`<div class="alert-box info">📌 <strong>Cenário 3 — Todos Misturados</strong><br>
+      Cada jogador deposita ambos os seus símbolos na estátua alvo — aquela cuja identidade é a forma que ele não possui.</div>`;
+    h+=`<div class="player-instruction r1"><div class="instr-header"><span class="title">Rodada 1</span><span class="round-badge r1">1º Cavaleiro</span></div><ol class="steps">
+      ${POS.map(pos=>`<li><strong>${LABEL[pos]}</strong> ${IS(has[pos][0])} envia ${B(has[pos][0])} → <strong>${LABEL[tgt[pos]]}</strong>. <span class="note">— 1º Cavaleiro</span></li>`).join('')}
+    </ol></div>`;
+    h+='<div class="round-sep">Aguardar Todos</div>';
+    h+=`<div class="player-instruction r2"><div class="instr-header"><span class="title">Rodada 2</span><span class="round-badge r2">2º Cavaleiro</span></div><ol class="steps">
+      ${POS.map(pos=>`<li><strong>${LABEL[pos]}</strong> ${IS(has[pos][1])} envia ${B(has[pos][1])} → <strong>${LABEL[tgt[pos]]}</strong>. <span class="note">— 2º Cavaleiro</span></li>`).join('')}
+    </ol></div>`;
+  }
+
+  h+='</div>';
+  h+=`<div class="rsec"><div class="rsec-title">Instruções Finais</div>
+    <div class="alert-box ok">✅ <strong>Concluído!</strong><br>
+    • Anote a <strong>Estátua do Depósito Final</strong> de cada sala.<br>
+    • Mate os Cavaleiros, pegue os Buffs e prepare-se para sair.<br>
+    • <strong>Externos:</strong> Não comecem a Dissecar até o lado de Dentro terminar.<br>
+    • <strong>Externos:</strong> Identifiquem a Estátua do Depósito Final e disseccionem em outra estátua.
+    </div></div>`;
+
+  el.innerHTML=h;
+}
+
+buildCards();
+update();
+</script>
+</body>
+</html>
