@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Verity — Destiny 2</title>
+    <style>
+        :root {
+            --bg-deep: #0a0d14;
+            --bg-elev: #1c2230;
+            --gold: #d4a64a;
+            --text: #e6e9ef;
+            --text-dim: #8b93a3;
+            --border: #2a3142;
+            --circle: #4fb3ff;
+            --square: #ff8a4f;
+            --triangle: #4fffb3;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: radial-gradient(circle at 50% 30%, rgba(138,79,255,0.08), transparent 50%), var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        h1 {
+            font-size: 2rem;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .menu-btn:hover {
+            border-color: var(--gold);
+            background: rgba(212,166,74,0.08);
+            transform: translateY(-2px);
+        }
+        .menu-btn .icon {
+            font-size: 1.6rem;
+            width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .menu-btn .label {
+            text-align: left;
+        }
+        .menu-btn .label small {
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+        .shapes {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .shape-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        .shape-dot.c { background: var(--circle); }
+        .shape-dot.s { background: var(--square); }
+        .shape-dot.t { background: var(--triangle); }
+        footer {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="shapes">
+            <div class="shape-dot c"></div>
+            <div class="shape-dot s"></div>
+            <div class="shape-dot t"></div>
+        </div>
+        <h1>Calculadora Verity</h1>
+        <p class="subtitle">4º Encontro — Limiar da Salvação</p>
+        
+        <div class="menu">
+            <a href="verity calculator.html" class="menu-btn">
+                <span class="icon">◈</span>
+                <span class="label">Modo Normal<small>Calculadora padrão de trocas</small></span>
+            </a>
+            <a href="verity_triumph_1.html" class="menu-btn">
+                <span class="icon">✦</span>
+                <span class="label">Triunfo: Igualdade Cósmica<small>Sem depósito na própria estátua</small></span>
+            </a>
+            <a href="verity_challenge.html" class="menu-btn">
+                <span class="icon">♛</span>
+                <span class="label">Desafio Mestre<small>Chave Pura — Todos saem ao mesmo tempo</small></span>
+            </a>
+        </div>
+        
+        <footer>Feito por Samuka e WTelles · Blades of Marika</footer>
+    </div>
+</body>
+</html>
