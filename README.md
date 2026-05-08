@@ -38,7 +38,7 @@ Agradeço imensamente a todos os Guardiões que testaram, deram feedback e ajuda
 - **Guilherme 'Borgov' Roque**
 - **Guilherme 'Guilherme' Tiago**
 - **Marlon 'Blood' Henrique**
-- **Noah 'Silent'**
+- **Noah 'Silent' Abernathy**
 - **Otávio 'Shifter' Fonseca**
 - **Ritchele 'RitcheleFZT' Fuzzatto**
 - **Vitor 'Vitor' Moro**
