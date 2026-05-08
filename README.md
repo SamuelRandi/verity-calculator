@@ -10,7 +10,7 @@ Calculadora web para auxiliar Guardiões no quarto encontro da raid **Limiar da 
 |------|-----------|
 | 🔮 Normal | Calculadora padrão de trocas entre jogadores internos |
 | 🏆 Triunfo | Igualdade Cósmica — sem depósito na própria estátua |
-| 🎯 Desafio Mestre | Chave Pura — todos saem ao mesmo tempo |
+| 🎯 Desafio Mestre | Chave Pura — Somente segundo encontro |
 
 ## 🚀 Como usar
 
@@ -49,4 +49,3 @@ Agradeço imensamente a todos os Guardiões que testaram, deram feedback e ajuda
 ---
 
 *Feito para Guardiões, por um Guardião. — "Olhos para cima, Portador da Luz."*
-Att, Samuel 'Samuka' Randi.
