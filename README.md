@@ -44,8 +44,6 @@ Agradeço imensamente a todos os Guardiões que testaram, deram feedback e ajuda
 - **Vitor 'Vitor' Moro**
 - **Wilson 'WTellesMjR' Telles**
 
-*Lista em ordem alfabética.*
-
 ---
 
 *Feito para Guardiões, por um Guardião. — "Olhos para cima, Portador da Luz."*
