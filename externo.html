@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dissecação Externa — Verity | Destiny 2</title>
+    <style>
+        :root {
+            --bg-deep:        #0a0d14;
+            --bg-panel:       #131822;
+            --bg-elev:        #1c2230;
+            --gold:           #d4a64a;
+            --gold-dim:       #8a6f30;
+            --gold-glow:      rgba(212,166,74,0.25);
+            --witness-purple: #8a4fff;
+            --text:           #e6e9ef;
+            --text-dim:       #8b93a3;
+            --circle:         #4fb3ff;
+            --square:         #ff8a4f;
+            --triangle:       #4fffb3;
+            --danger:         #ff4f4f;
+            --success:        #4fff8a;
+            --border:         #2a3142;
+            --red:            #ff4f4f;
+            --key-color:      #d4a64a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(138,79,255,0.08), transparent 40%),
+                radial-gradient(circle at 80% 90%, rgba(212,166,74,0.08), transparent 40%),
+                var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        header h1 {
+            font-size: 2.4rem;
+            color: var(--gold);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212,166,74,0.3);
+            margin-bottom: 8px;
+        }
+        header .subtitle { color: var(--text-dim); font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .panel {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 8px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .panel h2 {
+            color: var(--gold); font-size: 1.3rem; margin-bottom: 18px;
+            padding-bottom: 12px; border-bottom: 1px solid var(--border);
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        .statue-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;
+        }
+        @media (max-width: 700px) { .statue-row { grid-template-columns: 1fr; } }
+
+        .statue-card {
+            background: var(--bg-elev); border: 1px solid var(--border);
+            border-radius: 8px; padding: 16px; text-align: center;
+        }
+        .statue-card h3 {
+            color: var(--gold); font-size: 1rem; margin-bottom: 12px;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        select {
+            width: 100%; padding: 10px; background: var(--bg-deep);
+            border: 1px solid var(--border); color: var(--text);
+            border-radius: 6px; font-size: 0.9rem; outline: none;
+            cursor: pointer; margin-bottom: 10px;
+        }
+        select:focus { border-color: var(--gold); }
+
+        .btn {
+            display: inline-block; padding: 12px 28px; border: none;
+            border-radius: 6px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: var(--gold); color: #0a0d14;
+            width: 100%; margin-top: 15px;
+        }
+        .btn-primary:hover { background: #e6b85c; }
+
+        .btn-back {
+            display: inline-block; padding: 8px 18px; border: 1px solid var(--border);
+            border-radius: 6px; color: var(--text-dim); text-decoration: none;
+            font-size: 0.85rem; margin-top: 20px; transition: all 0.2s;
+        }
+        .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+
+        .result-box {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 8px; padding: 20px; margin-top: 25px;
+        }
+        .step-list { list-style: none; counter-reset: step; }
+        .step-list li {
+            counter-increment: step; position: relative;
+            padding: 12px 12px 12px 52px; margin-bottom: 8px;
+            background: var(--bg-deep); border-radius: 6px;
+            border: 1px solid transparent; font-size: 0.9rem;
+        }
+        .step-list li::before {
+            content: counter(step); position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            width: 28px; height: 28px; background: var(--gold); color: #0a0d14; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;
+        }
+        .step-list li strong { color: var(--gold); }
+        .tag {
+            display: inline-block; padding: 2px 8px; border-radius: 10px;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
+        }
+        .tag.circle { background: rgba(79,179,255,0.2); color: var(--circle); }
+        .tag.square { background: rgba(255,138,79,0.2); color: var(--square); }
+        .tag.triangle { background: rgba(79,255,179,0.2); color: var(--triangle); }
+
+        .alert {
+            padding: 12px 16px; border-radius: 6px; margin: 10px 0;
+            font-size: 0.9rem; border-left: 3px solid;
+        }
+        .alert.info { background: rgba(79,179,255,0.07); border-color: var(--circle); color: #a8d8ff; }
+        .alert.success { background: rgba(79,255,138,0.07); border-color: var(--success); color: #a8ffc8; }
+        .alert.warn { background: rgba(255,79,79,0.07); border-color: var(--red); color: #ffaaaa; }
+
+        footer { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-top: 25px; }
+        
+        .shape-icon {
+            display: inline-block;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Dissecação Externa</h1>
+        <div class="subtitle">Verity — Lado de Fora</div>
+    </header>
+
+    <div class="panel">
+        <h2>Estátuas 3D</h2>
+        <p style="color:var(--text-dim); margin-bottom:15px;">
+            Selecione as formas 3D <strong style="color:var(--gold)">atuais</strong> e as formas 3D
+            <strong style="color:var(--gold)">alvo</strong> (chave) de cada estátua.
+        </p>
+        <div class="statue-row" id="statueInputs"></div>
+        <button class="btn btn-primary" onclick="calculateDissection()">Calcular Dissecação</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <div style="text-align:center; color: var(--text-dim);">🔮 Selecione as formas e clique em calcular.</div>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="index.html" class="btn-back">← Voltar ao Menu</a>
+    </div>
+
+    <footer>Feito por Samuka e WTelles · Destiny 2</footer>
+</div>
+
+<script>
+    const shape3DComponents = {
+        'Esfera':   ['circle', 'circle'],
+        'Cubo':     ['square', 'square'],
+        'Pirâmide': ['triangle', 'triangle'],
+        'Cone':     ['circle', 'triangle'],
+        'Cilindro': ['circle', 'square'],
+        'Prisma':   ['square', 'triangle']
+    };
+    
+    const icon2D = { 'circle': '●', 'square': '■', 'triangle': '▲' };
+    const name2D = { 'circle': 'Círculo', 'square': 'Quadrado', 'triangle': 'Triângulo' };
+
+    function shapeOptionText(shapeName) {
+        const comps = shape3DComponents[shapeName];
+        return `${shapeName} ${comps.map(c => icon2D[c]).join('')}`;
+    }
+
+    const shapeNames = ['Esfera', 'Cubo', 'Pirâmide', 'Cone', 'Cilindro', 'Prisma'];
+    const statuePositions = ['left', 'middle', 'right'];
+    const statueLabels = { left: 'Esquerda', middle: 'Centro', right: 'Direita' };
+
+    function buildStatueSelectors() {
+        const container = document.getElementById('statueInputs');
+        let html = '';
+        statuePositions.forEach(pos => {
+            html += `
+            <div class="statue-card">
+                <h3>${statueLabels[pos]}</h3>
+                <label style="color:var(--text-dim); font-size:0.8rem;">Forma Atual</label>
+                <select id="current-${pos}">
+                    ${shapeNames.map(s => `<option value="${s}">${shapeOptionText(s)}</option>`).join('')}
+                </select>
+                <label style="color:var(--text-dim); font-size:0.8rem;">Forma Alvo</label>
+                <select id="target-${pos}">
+                    ${shapeNames.map(s => `<option value="${s}">${shapeOptionText(s)}</option>`).join('')}
+                </select>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function get2D(shapeName) {
+        return [...shape3DComponents[shapeName]];
+    }
+
+    // BFS apenas com swaps (troca direta entre duas estátuas)
+    function dissectionBFS(startState, targetState) {
+        const start = startState.map(arr => [...arr]);
+        const target = targetState.map(arr => [...arr]);
+
+        function isGoal(state) {
+            for (let i = 0; i < 3; i++) {
+                if (state[i].length !== 2) return false;
+                const sorted = [...state[i]].sort().join(',');
+                const targetSorted = [...target[i]].sort().join(',');
+                if (sorted !== targetSorted) return false;
+            }
+            return true;
+        }
+
+        function stateKey(state) {
+            return state.map(arr => [...arr].sort().join(',')).join('|');
+        }
+
+        let queue = [[start, []]];
+        let visited = new Set();
+        const maxDepth = 8; // mais que suficiente
+
+        while (queue.length > 0) {
+            let [cur, path] = queue.shift();
+            if (path.length > maxDepth) continue;
+            if (isGoal(cur)) return path;
+
+            let key = stateKey(cur);
+            if (visited.has(key)) continue;
+            visited.add(key);
+
+            // Gera swaps entre todos os pares de estátuas
+            for (let a = 0; a < 3; a++) {
+                for (let b = a + 1; b < 3; b++) {
+                    // para cada símbolo em A e cada símbolo em B
+                    const uniqueA = [...new Set(cur[a])];
+                    const uniqueB = [...new Set(cur[b])];
+                    for (let symA of uniqueA) {
+                        for (let symB of uniqueB) {
+                            if (symA === symB) continue;
+                            // Realiza o swap
+                            let newState = cur.map(arr => [...arr]);
+                            let idxA = newState[a].indexOf(symA);
+                            let idxB = newState[b].indexOf(symB);
+                            newState[a].splice(idxA, 1);
+                            newState[a].push(symB);
+                            newState[b].splice(idxB, 1);
+                            newState[b].push(symA);
+                            let newPath = [...path, { 
+                                type: 'swap', 
+                                from: statuePositions[a], 
+                                to: statuePositions[b], 
+                                symbolA: symA, 
+                                symbolB: symB 
+                            }];
+                            queue.push([newState, newPath]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function calculateDissection() {
+        const startState = statuePositions.map(pos => get2D(document.getElementById(`current-${pos}`).value));
+        const targetState = statuePositions.map(pos => get2D(document.getElementById(`target-${pos}`).value));
+
+        const path = dissectionBFS(startState, targetState);
+        const resultDiv = document.getElementById('resultBox');
+
+        if (!path) {
+            resultDiv.innerHTML = `<div class="alert warn">
+                ⚠️ Não foi possível encontrar uma sequência de dissecações. Verifique as formas.
+            </div>`;
+            return;
+        }
+
+        if (path.length === 0) {
+            resultDiv.innerHTML = `<div class="alert success">✅ As estátuas já estão nas formas corretas!</div>`;
+            return;
+        }
+
+        let html = `<h3 style="color:var(--gold); margin-bottom:12px;">Dissecações Necessárias (${path.length} passos)</h3>`;
+        html += '<ol class="step-list">';
+        path.forEach(step => {
+            if (step.type === 'swap') {
+                const iconA = icon2D[step.symbolA];
+                const nameA = name2D[step.symbolA];
+                const iconB = icon2D[step.symbolB];
+                const nameB = name2D[step.symbolB];
+                html += `<li>
+                    <strong>Trocar</strong> <span class="shape-icon">${iconA}</span> <span class="tag ${step.symbolA}">${nameA}</span> da Estátua ${statueLabels[step.from]} 
+                    com <span class="shape-icon">${iconB}</span> <span class="tag ${step.symbolB}">${nameB}</span> da Estátua ${statueLabels[step.to]}
+                </li>`;
+            }
+        });
+        html += '</ol>';
+        resultDiv.innerHTML = html;
+    }
+
+    buildStatueSelectors();
+</script>
+</body>
+</html>
