@@ -109,13 +109,6 @@
   .shape-btn.active { border-color: var(--gold); background: rgba(212,166,74,0.1); box-shadow: 0 0 14px var(--gold-glow); }
   .shape-btn svg { width: 100%; height: 100%; }
 
-  .state-badge {
-    display: inline-block; padding: 2px 9px; border-radius: 10px;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-  }
-  .state-badge.dup { background: rgba(79,179,255,0.15); color: var(--circle); }
-  .state-badge.mix { background: rgba(255,138,79,0.15); color: var(--square); }
-
   .counter-bar {
     background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
     padding: 12px 20px; display: flex; justify-content: center; align-items: center;
@@ -169,7 +162,6 @@
   .alert-box.ok     { background: rgba(79,255,138,0.07); border-color: var(--success); color: #a8ffc8; }
   .alert-box.warn   { background: rgba(255,79,79,0.07); border-color: var(--red); color: #ffaaaa; }
 
-  /* Steps / trade list */
   .trade-block {
     background: var(--bg-elev); border: 1px solid var(--border);
     border-radius: 6px; padding: 18px; margin-bottom: 14px;
@@ -190,16 +182,9 @@
     display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem;
   }
   .steps li strong { color: var(--gold); }
-  .steps li .note  { color: var(--text-dim); font-size: 0.82rem; }
+  .steps .note  { color: var(--text-dim); font-size: 0.82rem; }
   .steps .inline-shape { display: inline-flex; vertical-align: middle; width: 20px; height: 20px; margin: 0 3px; }
 
-  .round-sep {
-    display: flex; align-items: center; gap: 12px; color: var(--text-dim);
-    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin: 10px 0;
-  }
-  .round-sep::before, .round-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  /* Config grid */
   .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 10px; }
   .config-card {
     background: var(--bg-elev); border: 1px solid var(--border);
@@ -236,7 +221,7 @@
       Para cada jogador, selecione a <strong style="color:var(--gold)">Estátua</strong> (identidade 2D) e os dois
       <strong style="color:var(--gold)">Símbolos de Parede</strong> visíveis na sala.
     </p>
-    <p style="color:var(--text-dim); font-size:0.83rem;"><em>Regra da Chave Pura: cada forma deve aparecer exatamente 2× no total das paredes (●×2 ■×2 ▲×2). Cada jogador sai com 2 símbolos iguais, diferentes da sua estátua.</em></p>
+    <p style="color:var(--text-dim); font-size:0.83rem;"><em>Regra da Chave Pura: cada forma deve aparecer exatamente 2× no total das paredes (●×2 ■×2 ▲×2). Após a rotação, cada jogador sai com 2 símbolos iguais da forma rotacionada.</em></p>
     <div class="player-selection" id="playerCards"></div>
   </section>
 
@@ -250,18 +235,19 @@
   </div>
 
   <div class="result-panel">
-    <h2>Solução — Chave Pura</h2>
+    <h2>Solução — Chave Pura & Rodada Externa</h2>
     <div id="resultContent">
       <div class="wait-state"><span class="wait-icon">🔑</span>Selecione as formas acima para gerar o passo a passo...</div>
     </div>
   </div>
 
-      <footer>Feito por Samuka e WTelles · Calculadora Verity Desafio · Chave Pura · Use como referência durante a 2ª rodada do encontro.</footer>
+  <footer>Feito por Samuka e WTelles · Calculadora Verity Desafio · Chave Pura · Use como referência durante a 2ª rodada do encontro.</footer>
 </div>
 
 <script>
 const SHAPES = ['circle','square','triangle'];
 const NAME   = { circle:'Círculo', square:'Quadrado', triangle:'Triângulo' };
+const ABBR   = { circle:'C', square:'Q', triangle:'T' };
 const POS    = ['left','middle','right'];
 const LABEL  = { left:'Esquerda', middle:'Centro', right:'Direita' };
 const PNUM   = { left:1, middle:2, right:3 };
@@ -349,8 +335,64 @@ function update() {
 }
 
 // ────────────────────────────────────────────────────────────────
-// Lógica da Chave Pura (ported from verity_challenge.html)
+// Algoritmo direto de distribuição (substitui BFS)
 // ────────────────────────────────────────────────────────────────
+function computePureKeyTrades() {
+  // Target pela rotação
+  const target = {
+    left: base['right'],
+    middle: base['left'],
+    right: base['middle']
+  };
+
+  if (new Set(Object.values(target)).size !== 3) return null;
+
+  // Pool de símbolos: cada um com owner
+  const pool = [];
+  POS.forEach(pos => {
+    walls(pos).forEach(s => pool.push({ symbol: s, owner: pos }));
+  });
+
+  // Alocar para cada jogador 2 símbolos do tipo target, evitando owner == jogador
+  const allocation = { left: [], middle: [], right: [] };
+  const used = new Array(pool.length).fill(false);
+
+  for (const pos of POS) {
+    const needed = target[pos];
+    // Prefere símbolos cujo owner não seja o próprio jogador
+    for (let i = 0; i < pool.length; i++) {
+      if (used[i]) continue;
+      if (pool[i].symbol === needed && pool[i].owner !== pos) {
+        allocation[pos].push({ symbol: pool[i].symbol, from: pool[i].owner, to: pos });
+        used[i] = true;
+        if (allocation[pos].length === 2) break;
+      }
+    }
+    // Se ainda não tem 2, pega qualquer um (mesmo que seja do próprio dono – não ideal, mas raro)
+    if (allocation[pos].length < 2) {
+      for (let i = 0; i < pool.length; i++) {
+        if (used[i]) continue;
+        if (pool[i].symbol === needed) {
+          allocation[pos].push({ symbol: pool[i].symbol, from: pool[i].owner, to: pos });
+          used[i] = true;
+          if (allocation[pos].length === 2) break;
+        }
+      }
+    }
+    if (allocation[pos].length < 2) return null; // impossível
+  }
+
+  // Converte alocação em lista de trades
+  const trades = [];
+  POS.forEach(pos => {
+    allocation[pos].forEach(item => {
+      trades.push({ from: item.from, to: item.to, symbol: item.symbol });
+    });
+  });
+
+  return { target, trades };
+}
+
 function renderResult() {
   const el = document.getElementById('resultContent');
 
@@ -367,83 +409,51 @@ function renderResult() {
     return;
   }
 
-  const has = {};
-  POS.forEach(p => has[p] = walls(p));
+  const result = computePureKeyTrades();
 
-  // Determinar target (par puro ≠ estátua e válido para todos)
-  const others = {};
-  POS.forEach(p => others[p] = SHAPES.filter(s => s !== base[p]));
-
-  let target = null;
-  for(const c0 of others.left) {
-    for(const c1 of others.middle) {
-      for(const c2 of others.right) {
-        if([c0,c1,c2].sort().join(',') === 'circle,square,triangle') {
-          target = { left:c0, middle:c1, right:c2 };
-          break;
-        }
-      }
-      if(target) break;
-    }
-    if(target) break;
-  }
-
-  if(!target) {
-    el.innerHTML = `<div class="alert-box warn">⚠️ Não há combinação de Chave Pura válida com estas configurações.</div>`;
+  if (!result || !result.trades) {
+    el.innerHTML = '<div class="alert-box warn">⚠️ Não foi possível calcular uma sequência de trocas. Isso pode ocorrer se nenhum símbolo do tipo necessário estiver disponível sem violar as regras.</div>';
     return;
   }
 
-  // Calcular trocas
-  const trades = [];
-  const inventory = {};
-  POS.forEach(p => inventory[p] = [...has[p]]);
+  const { target, trades } = result;
 
-  POS.forEach(pos => {
-    const others_p = POS.filter(p => p !== pos);
-    for(let s = inventory[pos].length - 1; s >= 0; s--) {
-      const symb = inventory[pos][s];
-      if(symb === target[pos]) {
-        // Tem o símbolo que precisa mas não pode guardar — manda para outro e recebe de volta
-        const sendTo = others_p[0];
-        const recvFrom = others_p[1] || others_p[0];
-        trades.push({ from:pos, to:sendTo, symbol:symb, note:`Tem o alvo mas deve enviar — P${PNUM[pos]} envia para P${PNUM[sendTo]}` });
-        trades.push({ from:recvFrom, to:pos, symbol:symb, note:`P${PNUM[recvFrom]} devolve ${NAME[symb]} a P${PNUM[pos]}` });
-        inventory[pos].splice(s,1);
-      } else {
-        // Não é o alvo — manda para quem precisa
-        const whoNeeds = POS.find(p => p!==pos && target[p]===symb);
-        if(whoNeeds) {
-          trades.push({ from:pos, to:whoNeeds, symbol:symb, note:`P${PNUM[pos]} envia ${NAME[symb]} → P${PNUM[whoNeeds]}` });
-          inventory[pos].splice(s,1);
-        } else {
-          const any = others_p[0];
-          trades.push({ from:pos, to:any, symbol:symb, note:`P${PNUM[pos]} envia ${NAME[symb]} → P${PNUM[any]}` });
-          inventory[pos].splice(s,1);
-        }
-      }
-    }
+  // Ordem externa
+  const externOrder = POS.map(p => target[p]).sort().map(s => ABBR[s]).join('');
+  const externCall = {
+    'CQS': 'TT SS CC',
+    'CSQ': 'TT CC SS',
+    'QCS': 'SS TT CC',
+    'QSC': 'SS CC TT',
+    'SQC': 'CC SS TT',
+    'SCQ': 'CC TT SS'
+  };
+  const externString = externCall[externOrder] || 'TT SS CC';
+
+  // Agrupa trades por (from, to)
+  const grouped = new Map();
+  trades.forEach(t => {
+    const key = `${t.from}->${t.to}`;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(t.symbol);
   });
 
   let h = '';
-
-  // Cabeçalho
   h += `<div class="alert-box gold">🔑 <strong>CHAVE PURA — Desafio</strong><br>
-    <span style="font-size:.85rem">Cada jogador sai com 2 símbolos IGUAIS e DIFERENTES da sua estátua. Nunca depositar na própria estátua.</span></div>`;
+    <span style="font-size:.85rem">Rotação aplicada. Cada jogador sai com 2 símbolos iguais à forma rotacionada. NENHUM símbolo inicial permanece.</span></div>`;
 
-  // Resumo inicial
   h += '<div class="rsec"><div class="rsec-title">Configuração Inicial</div>';
   h += '<div class="config-grid">';
   POS.forEach(pos => {
     h += `<div class="config-card">
       <div class="player-label">P${PNUM[pos]} · ${LABEL[pos]}</div>
       <div>🗿 ${svg2D(base[pos],20)} ${B(base[pos])}</div>
-      <div style="margin-top:4px;color:var(--text-dim);font-size:.78rem">🧱 ${has[pos].map(s=>IS(s)+B(s)).join(' ')}</div>
-      <div class="target-line">➤ Alvo: <span class="badge badge-pure">${NAME[target[pos]]} ×2</span></div>
+      <div style="margin-top:4px;color:var(--text-dim);font-size:.78rem">🧱 ${walls(pos).map(s=>IS(s)+B(s)).join(' ')}</div>
+      <div class="target-line">➤ Alvo (rotação): <span class="badge badge-pure">${NAME[target[pos]]} ×2</span></div>
     </div>`;
   });
   h += '</div></div>';
 
-  // Resumo de jogadores
   h += '<div class="rsec"><div class="rsec-title">Resumo dos Jogadores</div><div class="summary-block">';
   POS.forEach(pos => {
     h += `<div class="summary-row">
@@ -451,59 +461,59 @@ function renderResult() {
       ${svg2D(base[pos],22)} ${B(base[pos])}
       <span class="arrow">·</span>
       <span style="color:var(--text-dim);font-size:.82rem">Paredes:</span>
-      ${has[pos].map(s=>IS(s)+B(s)).join('')}
+      ${walls(pos).map(s=>IS(s)+B(s)).join('')}
       <span class="arrow">→</span>
       <span class="badge badge-pure">${NAME[target[pos]]} ×2</span>
     </div>`;
   });
   h += '</div></div>';
 
-  // Sequência de trocas
-  h += '<div class="rsec"><div class="rsec-title">Sequência de Trocas</div>';
-  h += '<div class="alert-box info">💡 <strong>Regra do Desafio:</strong> Nunca deposite na sua própria estátua. Envie para outro e receba de outro.</div>';
+  h += '<div class="rsec"><div class="rsec-title">1ª Rodada (Interna) — Trocas</div>';
+  h += '<div class="alert-box info">💡 <strong>Regra do Desafio:</strong> Nunca deposite na sua própria estátua.</div>';
 
-  if(trades.length === 0) {
+  if (grouped.size === 0) {
     h += '<div class="alert-box ok">✅ Nenhuma troca necessária!</div>';
   } else {
-    h += `<div class="trade-block"><p style="font-size:.75rem;color:var(--text-dim);margin-bottom:10px;">${trades.length} trocas — Siga nesta ordem:</p>`;
+    h += `<div class="trade-block"><p style="font-size:.75rem;color:var(--text-dim);margin-bottom:10px;">${grouped.size} movimento(s):</p>`;
     h += '<ol class="steps">';
-    trades.forEach(t => {
-      const from = t.from, to = t.to;
-      if(!POS.includes(from) || !POS.includes(to)) {
-        h += `<li><span style="color:var(--danger)">⚠️ Erro: destino inválido</span></li>`;
-      } else {
-        h += `<li>
-          <strong>P${PNUM[from]} (${LABEL[from]})</strong>
-          ${IS(t.symbol)} → 
-          <strong>P${PNUM[to]} (${LABEL[to]})</strong>: ${B(t.symbol)}
-          ${t.note ? `<br><span class="note">${t.note}</span>` : ''}
-        </li>`;
-      }
-    });
+    for (const [key, symbols] of grouped) {
+      const [from, to] = key.split('->');
+      const symbolsList = symbols.map(s => `${IS(s)} ${B(s)}`).join(' + ');
+      h += `<li>
+        <strong>P${PNUM[from]} (${LABEL[from]})</strong>
+        → 
+        <strong>P${PNUM[to]} (${LABEL[to]})</strong>: ${symbolsList}
+      </li>`;
+    }
     h += '</ol></div>';
   }
   h += '</div>';
 
-  // Resultado esperado
-  h += '<div class="rsec"><div class="rsec-title">Resultado Esperado</div>';
+  h += '<div class="rsec"><div class="rsec-title">2ª Rodada (Externa) — Dobrar</div>';
+  h += `<div class="alert-box ok">✅ <strong>Ordem Externa:</strong> ${externString}<br>
+    <small>Com base na configuração atual, os externos devem ter estas duplas prontas.</small></div>`;
+  h += `<p style="font-size:0.8rem;color:var(--text-dim);">Internos: cada um deve juntar dois símbolos iguais ao seu alvo rotacionado.<br>
+  Não mergulhar durante a limpeza! Segure a forma, apenas não a deposite.</p>`;
+  h += '</div>';
+
+  h += '<div class="rsec"><div class="rsec-title">Resultado Final</div>';
   h += '<div class="summary-block">';
   POS.forEach(pos => {
+    const arr = [target[pos], target[pos]];
     h += `<div class="summary-row">
       <span class="pos">P${PNUM[pos]} ${LABEL[pos]}</span>
-      <span style="color:var(--text-dim);font-size:.82rem">Sai com:</span>
-      ${IS(target[pos])}<span class="badge badge-pure">${NAME[target[pos]]} ×2</span>
+      <span style="color:var(--text-dim);font-size:.82rem">Ficou com:</span>
+      ${arr.map(s=>IS(s)+B(s)).join(' ')}
       <span style="color:var(--success);font-size:.8rem">✓</span>
     </div>`;
   });
   h += '</div></div>';
 
-  // Dicas finais
   h += `<div class="rsec"><div class="rsec-title">Regras da Chave Pura</div>
     <div class="alert-box ok">✅ 
-      <strong>Chave Pura:</strong> Cada jogador fica com 2 símbolos iguais ≠ estátua.<br>
+      <strong>Chave Pura:</strong> Cada jogador fica com 2 símbolos iguais à forma rotacionada (≠ estátua original).<br>
       🚫 <strong>Nunca</strong> depositar na própria estátua.<br>
-      🔄 Se um jogador já tem o símbolo alvo: envia para outro e recebe de outro jogador.<br>
-      💡 Pode enviar e receber de qualquer um dos outros 2 jogadores.
+      🔄 Todos os símbolos iniciais saem dos donos originais.
     </div></div>`;
 
   el.innerHTML = h;
