@@ -4,13 +4,14 @@
 
 Calculadora web para auxiliar Guardiões no quarto encontro da raid **Limiar da Salvação** (Salvation's Edge) — **Verity**.
 
-## 🧩 Modos disponíveis
+## Modos disponíveis
 
 | Modo | Descrição |
 |------|-----------|
-| 🔮 Normal | Calculadora padrão de trocas entre jogadores internos |
-| 🏆 Triunfo | Igualdade Cósmica — sem depósito na própria estátua |
-| 🎯 Desafio Mestre | Chave Pura — Somente segundo encontro |
+| 🧩 Normal | Calculadora padrão de trocas entre jogadores internos |
+| 🌟 Triunfo | Igualdade Cósmica — sem depósito na própria estátua |
+| 👑 Desafio Mestre | Chave Pura — Somente segundo encontro |
+| 🔀 Dissecação Externa | Calculadora padrão e do desafio do lado de fora |
 
 ## 🚀 Como usar
 
