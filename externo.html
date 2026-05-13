@@ -36,7 +36,7 @@
             line-height: 1.6;
             padding: 20px;
         }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 1000px; margin: 0 auto; }
 
         header {
             text-align: center;
@@ -78,6 +78,23 @@
             color: var(--gold); font-size: 1rem; margin-bottom: 12px;
             letter-spacing: 1px; text-transform: uppercase;
         }
+
+        .shape-selector {
+            display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;
+        }
+        .shape-dot {
+            width: 40px; height: 40px; border-radius: 6px; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; cursor: pointer; transition: all 0.2s;
+            background: var(--bg-deep);
+        }
+        .shape-dot:hover:not(.locked) { border-color: var(--gold-dim); transform: translateY(-2px); }
+        .shape-dot.selected { border-color: var(--gold); background: rgba(212,166,74,0.15); box-shadow: 0 0 10px var(--gold-glow); }
+        .shape-dot.locked { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+        .shape-dot.circle { color: var(--circle); }
+        .shape-dot.square { color: var(--square); }
+        .shape-dot.triangle { color: var(--triangle); }
+
         select {
             width: 100%; padding: 10px; background: var(--bg-deep);
             border: 1px solid var(--border); color: var(--text);
@@ -138,12 +155,6 @@
         .alert.warn { background: rgba(255,79,79,0.07); border-color: var(--red); color: #ffaaaa; }
 
         footer { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-top: 25px; }
-        
-        .shape-icon {
-            display: inline-block;
-            font-size: 1.1em;
-            vertical-align: middle;
-        }
     </style>
 </head>
 <body>
@@ -156,8 +167,7 @@
     <div class="panel">
         <h2>Estátuas 3D</h2>
         <p style="color:var(--text-dim); margin-bottom:15px;">
-            Selecione as formas 3D <strong style="color:var(--gold)">atuais</strong> e as formas 3D
-            <strong style="color:var(--gold)">alvo</strong> (chave) de cada estátua.
+            Selecione o <strong style="color:var(--gold)">símbolo 2D</strong> que cada estátua representa (apenas para referência visual) e depois as formas 3D atuais e alvo.
         </p>
         <div class="statue-row" id="statueInputs"></div>
         <button class="btn btn-primary" onclick="calculateDissection()">Calcular Dissecação</button>
@@ -187,14 +197,47 @@
     const icon2D = { 'circle': '●', 'square': '■', 'triangle': '▲' };
     const name2D = { 'circle': 'Círculo', 'square': 'Quadrado', 'triangle': 'Triângulo' };
 
+    // Gera o texto das opções com ícones (ex: "Esfera ●●")
     function shapeOptionText(shapeName) {
         const comps = shape3DComponents[shapeName];
-        return `${shapeName} ${comps.map(c => icon2D[c]).join('')}`;
+        const icons = comps.map(c => icon2D[c]).join('');
+        return `${shapeName} ${icons}`;
     }
 
     const shapeNames = ['Esfera', 'Cubo', 'Pirâmide', 'Cone', 'Cilindro', 'Prisma'];
     const statuePositions = ['left', 'middle', 'right'];
     const statueLabels = { left: 'Esquerda', middle: 'Centro', right: 'Direita' };
+
+    // Estado da seleção visual dos símbolos 2D (apenas um por posição, sem repetir)
+    let selectedSymbols = { left: null, middle: null, right: null };
+
+    function onSymbolClick(pos, shape) {
+        if (selectedSymbols[pos] === shape) {
+            selectedSymbols[pos] = null;
+        } else {
+            // Desmarca o mesmo símbolo em outra posição se já estiver selecionado
+            for (const p of statuePositions) {
+                if (selectedSymbols[p] === shape) {
+                    selectedSymbols[p] = null;
+                }
+            }
+            selectedSymbols[pos] = shape;
+        }
+        updateSymbolSelectors();
+    }
+
+    function updateSymbolSelectors() {
+        statuePositions.forEach(pos => {
+            const dots = document.querySelectorAll(`#sym-${pos} .shape-dot`);
+            dots.forEach(dot => {
+                const shape = dot.dataset.shape;
+                const isSelected = selectedSymbols[pos] === shape;
+                const isUsedElsewhere = Object.entries(selectedSymbols).some(([p, s]) => p !== pos && s === shape);
+                dot.classList.toggle('selected', isSelected);
+                dot.classList.toggle('locked', isUsedElsewhere && !isSelected);
+            });
+        });
+    }
 
     function buildStatueSelectors() {
         const container = document.getElementById('statueInputs');
@@ -203,6 +246,11 @@
             html += `
             <div class="statue-card">
                 <h3>${statueLabels[pos]}</h3>
+                <div id="sym-${pos}" class="shape-selector">
+                    <div class="shape-dot circle" data-shape="circle" onclick="onSymbolClick('${pos}', 'circle')">${icon2D.circle}</div>
+                    <div class="shape-dot square" data-shape="square" onclick="onSymbolClick('${pos}', 'square')">${icon2D.square}</div>
+                    <div class="shape-dot triangle" data-shape="triangle" onclick="onSymbolClick('${pos}', 'triangle')">${icon2D.triangle}</div>
+                </div>
                 <label style="color:var(--text-dim); font-size:0.8rem;">Forma Atual</label>
                 <select id="current-${pos}">
                     ${shapeNames.map(s => `<option value="${s}">${shapeOptionText(s)}</option>`).join('')}
@@ -214,6 +262,7 @@
             </div>`;
         });
         container.innerHTML = html;
+        updateSymbolSelectors();
     }
 
     function get2D(shapeName) {
@@ -241,7 +290,7 @@
 
         let queue = [[start, []]];
         let visited = new Set();
-        const maxDepth = 8; // mais que suficiente
+        const maxDepth = 8;
 
         while (queue.length > 0) {
             let [cur, path] = queue.shift();
@@ -252,21 +301,18 @@
             if (visited.has(key)) continue;
             visited.add(key);
 
-            // Gera swaps entre todos os pares de estátuas
             for (let a = 0; a < 3; a++) {
                 for (let b = a + 1; b < 3; b++) {
-                    // para cada símbolo em A e cada símbolo em B
                     const uniqueA = [...new Set(cur[a])];
                     const uniqueB = [...new Set(cur[b])];
                     for (let symA of uniqueA) {
                         for (let symB of uniqueB) {
                             if (symA === symB) continue;
-                            // Realiza o swap
                             let newState = cur.map(arr => [...arr]);
                             let idxA = newState[a].indexOf(symA);
-                            let idxB = newState[b].indexOf(symB);
                             newState[a].splice(idxA, 1);
                             newState[a].push(symB);
+                            let idxB = newState[b].indexOf(symB);
                             newState[b].splice(idxB, 1);
                             newState[b].push(symA);
                             let newPath = [...path, { 
