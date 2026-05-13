@@ -1,375 +1,533 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dissecação Externa — Verity | Destiny 2</title>
-    <style>
-        :root {
-            --bg-deep:        #0a0d14;
-            --bg-panel:       #131822;
-            --bg-elev:        #1c2230;
-            --gold:           #d4a64a;
-            --gold-dim:       #8a6f30;
-            --gold-glow:      rgba(212,166,74,0.25);
-            --witness-purple: #8a4fff;
-            --text:           #e6e9ef;
-            --text-dim:       #8b93a3;
-            --circle:         #4fb3ff;
-            --square:         #ff8a4f;
-            --triangle:       #4fffb3;
-            --danger:         #ff4f4f;
-            --success:        #4fff8a;
-            --border:         #2a3142;
-            --red:            #ff4f4f;
-            --key-color:      #d4a64a;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background:
-                radial-gradient(circle at 20% 10%, rgba(138,79,255,0.08), transparent 40%),
-                radial-gradient(circle at 80% 90%, rgba(212,166,74,0.08), transparent 40%),
-                var(--bg-deep);
-            color: var(--text);
-            min-height: 100vh;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container { max-width: 1000px; margin: 0 auto; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Verity — Desafio · Chave Pura | Destiny 2</title>
+<style>
+  :root {
+    --bg-deep:        #0a0d14;
+    --bg-panel:       #131822;
+    --bg-elev:        #1c2230;
+    --gold:           #d4a64a;
+    --gold-dim:       #8a6f30;
+    --gold-glow:      rgba(212,166,74,0.25);
+    --witness-purple: #8a4fff;
+    --text:           #e6e9ef;
+    --text-dim:       #8b93a3;
+    --circle:         #4fb3ff;
+    --square:         #ff8a4f;
+    --triangle:       #4fffb3;
+    --danger:         #ff4f4f;
+    --success:        #4fff8a;
+    --border:         #2a3142;
+    --red:            #ff4f4f;
+    --key-color:      #d4a64a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(138,79,255,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(212,166,74,0.08), transparent 40%),
+      var(--bg-deep);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
 
-        header {
-            text-align: center;
-            padding: 30px 20px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
-        }
-        header h1 {
-            font-size: 2.4rem;
-            color: var(--gold);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(212,166,74,0.3);
-            margin-bottom: 8px;
-        }
-        header .subtitle { color: var(--text-dim); font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; }
+  header {
+    text-align: center;
+    padding: 30px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 30px;
+  }
+  header h1 {
+    font-size: 2.4rem;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(212,166,74,0.3);
+    margin-bottom: 8px;
+  }
+  header .subtitle { color: var(--text-dim); font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; }
+  header .raid-name { color: var(--witness-purple); font-size: 1.1rem; margin-top: 10px; letter-spacing: 1px; }
+  .badges { margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .badge-pill {
+    display: inline-block;
+    padding: 5px 18px; border-radius: 20px;
+    font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+  }
+  .badge-challenge { background: rgba(255,79,79,0.12); color: var(--red); border: 1px solid rgba(255,79,79,0.3); }
+  .badge-pure-key  { background: rgba(212,166,74,0.12); color: var(--gold); border: 1px solid rgba(212,166,74,0.3); }
 
-        .panel {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: 8px; padding: 25px; margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .panel h2 {
-            color: var(--gold); font-size: 1.3rem; margin-bottom: 18px;
-            padding-bottom: 12px; border-bottom: 1px solid var(--border);
-            letter-spacing: 1px; text-transform: uppercase;
-        }
+  .panel {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 25px; margin-bottom: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .panel h2 {
+    color: var(--gold); font-size: 1.3rem; margin-bottom: 18px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
 
-        .statue-row {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;
-        }
-        @media (max-width: 700px) { .statue-row { grid-template-columns: 1fr; } }
+  .player-selection {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 20px;
+  }
+  @media (max-width:700px) { .player-selection { grid-template-columns: 1fr; } }
 
-        .statue-card {
-            background: var(--bg-elev); border: 1px solid var(--border);
-            border-radius: 8px; padding: 16px; text-align: center;
-        }
-        .statue-card h3 {
-            color: var(--gold); font-size: 1rem; margin-bottom: 12px;
-            letter-spacing: 1px; text-transform: uppercase;
-        }
+  .player-card {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px; text-align: center; transition: all 0.2s;
+  }
+  .player-card.complete { border-color: var(--gold); box-shadow: 0 0 20px rgba(212,166,74,0.15); }
+  .player-card .position {
+    color: var(--gold); font-size: 0.85rem; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 3px; font-weight: 700;
+  }
+  .card-label {
+    color: var(--text-dim); font-size: 0.78rem; margin-bottom: 12px;
+    min-height: 22px; display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .section-title {
+    font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 2px; margin: 12px 0 6px;
+    border-top: 1px solid var(--border); padding-top: 10px; text-align: left;
+  }
 
-        .shape-selector {
-            display: flex; justify-content: center; gap: 8px; margin-bottom: 15px;
-        }
-        .shape-dot {
-            width: 40px; height: 40px; border-radius: 6px; border: 2px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; cursor: pointer; transition: all 0.2s;
-            background: var(--bg-deep);
-        }
-        .shape-dot:hover:not(.locked) { border-color: var(--gold-dim); transform: translateY(-2px); }
-        .shape-dot.selected { border-color: var(--gold); background: rgba(212,166,74,0.15); box-shadow: 0 0 10px var(--gold-glow); }
-        .shape-dot.locked { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
-        .shape-dot.circle { color: var(--circle); }
-        .shape-dot.square { color: var(--square); }
-        .shape-dot.triangle { color: var(--triangle); }
+  .shape-row { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+  .shape-btn {
+    width: 56px; height: 56px; border: 2px solid var(--border); background: var(--bg-deep);
+    border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; padding: 6px; flex-shrink: 0;
+  }
+  .shape-btn:hover:not(:disabled) { border-color: var(--gold-dim); transform: translateY(-2px); }
+  .shape-btn:disabled { opacity: 0.18; cursor: not-allowed; transform: none; }
+  .shape-btn.active { border-color: var(--gold); background: rgba(212,166,74,0.1); box-shadow: 0 0 14px var(--gold-glow); }
+  .shape-btn svg { width: 100%; height: 100%; }
 
-        select {
-            width: 100%; padding: 10px; background: var(--bg-deep);
-            border: 1px solid var(--border); color: var(--text);
-            border-radius: 6px; font-size: 0.9rem; outline: none;
-            cursor: pointer; margin-bottom: 10px;
-        }
-        select:focus { border-color: var(--gold); }
+  .counter-bar {
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px 20px; display: flex; justify-content: center; align-items: center;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 25px; font-size: 0.85rem;
+  }
+  .counter-item { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
+  .counter-item .count { font-weight: 700; font-size: 1rem; }
+  .count.circle { color: var(--circle); } .count.square { color: var(--square); } .count.triangle { color: var(--triangle); }
+  .count.full { color: var(--success) !important; }
+  .counter-sep { color: var(--border); font-size: 1.2rem; }
+  .valid-line { text-align: center; color: var(--success); font-weight: 700; letter-spacing: 1px; font-size: 0.85rem; width: 100%; display: none; }
 
-        .btn {
-            display: inline-block; padding: 12px 28px; border: none;
-            border-radius: 6px; font-weight: 700; font-size: 1rem;
-            cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
-        }
-        .btn-primary {
-            background: var(--gold); color: #0a0d14;
-            width: 100%; margin-top: 15px;
-        }
-        .btn-primary:hover { background: #e6b85c; }
+  .result-panel {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .result-panel h2 {
+    color: var(--gold); font-size: 1.3rem; margin-bottom: 18px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .wait-state { text-align: center; color: var(--text-dim); padding: 35px 20px; font-size: 0.9rem; letter-spacing: 1px; }
+  .wait-state .wait-icon { font-size: 2.5rem; display: block; margin-bottom: 12px; opacity: 0.3; }
+  .wait-state small { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; font-size: 0.78rem; opacity: 0.6; }
 
-        .btn-back {
-            display: inline-block; padding: 8px 18px; border: 1px solid var(--border);
-            border-radius: 6px; color: var(--text-dim); text-decoration: none;
-            font-size: 0.85rem; margin-top: 20px; transition: all 0.2s;
-        }
-        .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+  .rsec { margin-bottom: 22px; }
+  .rsec-title {
+    color: var(--text-dim); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+  }
+  .rsec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        .result-box {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: 8px; padding: 20px; margin-top: 25px;
-        }
-        .step-list { list-style: none; counter-reset: step; }
-        .step-list li {
-            counter-increment: step; position: relative;
-            padding: 12px 12px 12px 52px; margin-bottom: 8px;
-            background: var(--bg-deep); border-radius: 6px;
-            border: 1px solid transparent; font-size: 0.9rem;
-        }
-        .step-list li::before {
-            content: counter(step); position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-            width: 28px; height: 28px; background: var(--gold); color: #0a0d14; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;
-        }
-        .step-list li strong { color: var(--gold); }
-        .tag {
-            display: inline-block; padding: 2px 8px; border-radius: 10px;
-            font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
-        }
-        .tag.circle { background: rgba(79,179,255,0.2); color: var(--circle); }
-        .tag.square { background: rgba(255,138,79,0.2); color: var(--square); }
-        .tag.triangle { background: rgba(79,255,179,0.2); color: var(--triangle); }
+  .summary-block {
+    background: var(--bg-elev); border-left: 3px solid var(--witness-purple);
+    border-radius: 0 6px 6px 0; padding: 14px 20px; margin-bottom: 4px;
+  }
+  .summary-row {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    border-bottom: 1px dashed var(--border); flex-wrap: wrap;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .pos { color: var(--gold); min-width: 80px; font-weight: 700; text-transform: uppercase; font-size: 0.82rem; letter-spacing: 1px; }
+  .summary-row .arrow { color: var(--text-dim); font-size: 0.82rem; }
 
-        .alert {
-            padding: 12px 16px; border-radius: 6px; margin: 10px 0;
-            font-size: 0.9rem; border-left: 3px solid;
-        }
-        .alert.info { background: rgba(79,179,255,0.07); border-color: var(--circle); color: #a8d8ff; }
-        .alert.success { background: rgba(79,255,138,0.07); border-color: var(--success); color: #a8ffc8; }
-        .alert.warn { background: rgba(255,79,79,0.07); border-color: var(--red); color: #ffaaaa; }
+  .alert-box {
+    padding: 12px 16px; border-radius: 6px; margin: 8px 0;
+    font-size: 0.85rem; line-height: 1.6; border-left: 3px solid;
+  }
+  .alert-box.gold   { background: rgba(212,166,74,0.07); border-color: var(--gold); color: #f0d890; }
+  .alert-box.info   { background: rgba(79,179,255,0.07); border-color: var(--circle); color: #a8d8ff; }
+  .alert-box.ok     { background: rgba(79,255,138,0.07); border-color: var(--success); color: #a8ffc8; }
+  .alert-box.warn   { background: rgba(255,79,79,0.07); border-color: var(--red); color: #ffaaaa; }
 
-        footer { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-top: 25px; }
-    </style>
+  .trade-block {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 6px; padding: 18px; margin-bottom: 14px;
+    border-left: 4px solid var(--gold-dim);
+  }
+  .steps { list-style: none; counter-reset: step; }
+  .steps li {
+    counter-increment: step; position: relative;
+    padding: 11px 12px 11px 48px; margin-bottom: 6px;
+    background: var(--bg-deep); border-radius: 6px;
+    border: 1px solid transparent; transition: border-color 0.2s;
+    font-size: 0.88rem; line-height: 1.5;
+  }
+  .steps li:hover { border-color: var(--gold-dim); }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 26px; height: 26px; background: var(--gold); color: var(--bg-deep); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem;
+  }
+  .steps li strong { color: var(--gold); }
+  .steps .note  { color: var(--text-dim); font-size: 0.82rem; }
+  .steps .inline-shape { display: inline-flex; vertical-align: middle; width: 20px; height: 20px; margin: 0 3px; }
+
+  .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 10px; }
+  .config-card {
+    background: var(--bg-elev); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px; text-align: center; font-size: 0.82rem;
+  }
+  .config-card .player-label { color: var(--gold); font-weight: 700; margin-bottom: 6px; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+  .config-card .target-line { margin-top: 8px; font-size: 0.78rem; color: var(--success); }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .badge-circle   { background: rgba(79,179,255,0.2); color: var(--circle); }
+  .badge-square   { background: rgba(255,138,79,0.2); color: var(--square); }
+  .badge-triangle { background: rgba(79,255,179,0.2); color: var(--triangle); }
+  .badge-pure     { background: rgba(212,166,74,0.2); color: var(--gold); border: 1px solid rgba(212,166,74,0.3); }
+  .badge-route    { background: rgba(138,79,255,0.18); color: var(--witness-purple); border: 1px solid rgba(138,79,255,0.4); margin-left: 6px; }
+  .badge-return   { background: rgba(79,255,138,0.15); color: var(--success); border: 1px solid rgba(79,255,138,0.4); margin-left: 6px; }
+
+  footer { text-align: center; color: var(--text-dim); font-size: 0.82rem; padding: 20px; margin-top: 30px; border-top: 1px solid var(--border); }
+</style>
 </head>
 <body>
 <div class="container">
-    <header>
-        <h1>Dissecação Externa</h1>
-        <div class="subtitle">Verity — Lado de Fora</div>
-    </header>
 
-    <div class="panel">
-        <h2>Estátuas 3D</h2>
-        <p style="color:var(--text-dim); margin-bottom:15px;">
-            Selecione o <strong style="color:var(--gold)">símbolo 2D</strong> que cada estátua representa (apenas para referência visual) e depois as formas 3D atuais e alvo.
-        </p>
-        <div class="statue-row" id="statueInputs"></div>
-        <button class="btn btn-primary" onclick="calculateDissection()">Calcular Dissecação</button>
+  <header>
+    <h1>Calculadora Verity</h1>
+    <div class="subtitle">4º Encontro — Veracidade</div>
+    <div class="raid-name">Destiny 2 · Limiar da Salvação</div>
+    <div class="badges">
+      <span class="badge-pill badge-challenge">🎯 Modo Desafio</span>
+      <span class="badge-pill badge-pure-key">🔑 Chave Pura</span>
     </div>
+  </header>
 
-    <div class="result-box" id="resultBox">
-        <div style="text-align:center; color: var(--text-dim);">🔮 Selecione as formas e clique em calcular.</div>
+  <section class="panel">
+    <h2>Formas dos Jogadores Internos</h2>
+    <p style="color:var(--text-dim); margin-bottom:6px;">
+      Para cada jogador, selecione a <strong style="color:var(--gold)">Estátua</strong> (identidade 2D) e os dois
+      <strong style="color:var(--gold)">Símbolos de Parede</strong> visíveis na sala.
+    </p>
+    <p style="color:var(--text-dim); font-size:0.83rem;"><em>Regra da Chave Pura: cada forma deve aparecer exatamente 2× no total das paredes (●×2 ■×2 ▲×2). Após a rotação, cada jogador sai com 2 símbolos iguais da forma rotacionada.</em></p>
+    <div class="player-selection" id="playerCards"></div>
+  </section>
+
+  <div class="counter-bar" id="counterBar">
+    <div class="counter-item"><span id="svg-c-sm"></span><span class="count circle" id="cnt-c">0/2</span></div>
+    <div class="counter-sep">·</div>
+    <div class="counter-item"><span id="svg-s-sm"></span><span class="count square" id="cnt-s">0/2</span></div>
+    <div class="counter-sep">·</div>
+    <div class="counter-item"><span id="svg-t-sm"></span><span class="count triangle" id="cnt-t">0/2</span></div>
+    <div class="valid-line" id="valid-line">✓ Configuração válida — gerando solução...</div>
+  </div>
+
+  <div class="result-panel">
+    <h2>Solução — Chave Pura & Rodada Externa</h2>
+    <div id="resultContent">
+      <div class="wait-state"><span class="wait-icon">🔑</span>Selecione as formas acima para gerar o passo a passo...</div>
     </div>
+  </div>
 
-    <div style="text-align: center;">
+  <div style="text-align: center;">
         <a href="index.html" class="btn-back">← Voltar ao Menu</a>
     </div>
 
-    <footer>Feito por Samuka e WTelles · Destiny 2</footer>
+  <footer>Feito por Samuka e WTelles · Calculadora Verity Desafio · Chave Pura · Use como referência durante a 2ª rodada do encontro.</footer>
 </div>
 
 <script>
-    const shape3DComponents = {
-        'Esfera':   ['circle', 'circle'],
-        'Cubo':     ['square', 'square'],
-        'Pirâmide': ['triangle', 'triangle'],
-        'Cone':     ['circle', 'triangle'],
-        'Cilindro': ['circle', 'square'],
-        'Prisma':   ['square', 'triangle']
-    };
-    
-    const icon2D = { 'circle': '●', 'square': '■', 'triangle': '▲' };
-    const name2D = { 'circle': 'Círculo', 'square': 'Quadrado', 'triangle': 'Triângulo' };
+const SHAPES = ['circle','square','triangle'];
+const NAME   = { circle:'Círculo', square:'Quadrado', triangle:'Triângulo' };
+const ABBR   = { circle:'C', square:'Q', triangle:'T' };
+const POS    = ['left','middle','right'];
+const LABEL  = { left:'Esquerda', middle:'Centro', right:'Direita' };
+const PNUM   = { left:1, middle:2, right:3 };
 
-    // Gera o texto das opções com ícones (ex: "Esfera ●●")
-    function shapeOptionText(shapeName) {
-        const comps = shape3DComponents[shapeName];
-        const icons = comps.map(c => icon2D[c]).join('');
-        return `${shapeName} ${icons}`;
+let base = { left:null, middle:null, right:null };
+let sym1 = { left:null, middle:null, right:null };
+let sym2 = { left:null, middle:null, right:null };
+
+function svg2D(shape, size=40) {
+  const C = { circle:'#4fb3ff', square:'#ff8a4f', triangle:'#4fffb3' };
+  const c=C[shape], s=size;
+  if (shape==='circle')   return `<svg viewBox="0 0 40 40" width="${s}" height="${s}"><circle cx="20" cy="20" r="14" fill="${c}" opacity="0.25" stroke="${c}" stroke-width="2.5"/></svg>`;
+  if (shape==='square')   return `<svg viewBox="0 0 40 40" width="${s}" height="${s}"><rect x="7" y="7" width="26" height="26" fill="${c}" opacity="0.25" stroke="${c}" stroke-width="2.5"/></svg>`;
+  if (shape==='triangle') return `<svg viewBox="0 0 40 40" width="${s}" height="${s}"><polygon points="20,5 35,33 5,33" fill="${c}" opacity="0.25" stroke="${c}" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+  return '';
+}
+
+const IS = s => `<span class="inline-shape">${svg2D(s,20)}</span>`;
+const B  = s => `<span class="badge badge-${s}">${NAME[s]}</span>`;
+
+function walls(p)  { const w=[]; if(sym1[p]) w.push(sym1[p]); if(sym2[p]) w.push(sym2[p]); return w; }
+function countWalls() { const c={circle:0,square:0,triangle:0}; POS.forEach(p=>walls(p).forEach(s=>c[s]++)); return c; }
+function remaining(s) { return 2-countWalls()[s]; }
+function isValid() {
+  if(POS.some(p=>!base[p])) return false;
+  if(POS.some(p=>walls(p).length!==2)) return false;
+  const c=countWalls(); return c.circle===2&&c.square===2&&c.triangle===2;
+}
+
+function click2(type,pos,shape) {
+  if(type==='base') base[pos]=(base[pos]===shape)?null:shape;
+  else if(type==='sym1') sym1[pos]=(sym1[pos]===shape)?null:shape;
+  else sym2[pos]=(sym2[pos]===shape)?null:shape;
+  update();
+}
+
+function buildCards() {
+  document.getElementById('playerCards').innerHTML = POS.map(pos => `
+    <div class="player-card" id="card-${pos}">
+      <div class="position">Jogador ${PNUM[pos]} · ${LABEL[pos]}</div>
+      <div class="card-label" id="lbl-${pos}">—</div>
+      <div class="section-title">🗿 Estátua</div>
+      <div class="shape-row">${SHAPES.map(s=>`<button class="shape-btn" id="base-${pos}-${s}" onclick="click2('base','${pos}','${s}')">${svg2D(s,40)}</button>`).join('')}</div>
+      <div class="section-title">🧱 Símbolo de Parede 1</div>
+      <div class="shape-row">${SHAPES.map(s=>`<button class="shape-btn" id="sym1-${pos}-${s}" onclick="click2('sym1','${pos}','${s}')">${svg2D(s,40)}</button>`).join('')}</div>
+      <div class="section-title">🧱 Símbolo de Parede 2</div>
+      <div class="shape-row">${SHAPES.map(s=>`<button class="shape-btn" id="sym2-${pos}-${s}" onclick="click2('sym2','${pos}','${s}')">${svg2D(s,40)}</button>`).join('')}</div>
+    </div>`).join('');
+  document.getElementById('svg-c-sm').innerHTML = svg2D('circle',18);
+  document.getElementById('svg-s-sm').innerHTML = svg2D('square',18);
+  document.getElementById('svg-t-sm').innerHTML = svg2D('triangle',18);
+}
+
+function update() {
+  const cnt = countWalls();
+  POS.forEach(pos => {
+    ['base','sym1','sym2'].forEach(t => {
+      const val = t==='base'?base[pos]:t==='sym1'?sym1[pos]:sym2[pos];
+      SHAPES.forEach(s => {
+        const btn = document.getElementById(`${t}-${pos}-${s}`);
+        if(!btn) return;
+        btn.classList.toggle('active', val===s);
+        if(t!=='base') btn.disabled = val!==s && remaining(s)<=0;
+      });
+    });
+    const w = walls(pos);
+    const lbl = document.getElementById(`lbl-${pos}`);
+    if(base[pos]) {
+      lbl.innerHTML = `${svg2D(base[pos],18)} ${NAME[base[pos]]} &nbsp;|&nbsp; 🧱 ${w.length}/2`;
+    } else { lbl.textContent='—'; }
+    document.getElementById(`card-${pos}`).classList.toggle('complete', isValid()&&w.length===2&&!!base[pos]);
+  });
+
+  ['circle','square','triangle'].forEach(s => {
+    const id = s==='circle'?'c':s==='square'?'s':'t';
+    const el = document.getElementById(`cnt-${id}`);
+    el.textContent = cnt[s]+'/2';
+    el.className = `count ${s}${cnt[s]===2?' full':''}`;
+  });
+
+  const vl = document.getElementById('valid-line');
+  vl.style.display = isValid() ? 'block' : 'none';
+
+  renderResult();
+}
+
+// ────────────────────────────────────────────────────────────────
+// Algoritmo direto de distribuição (substitui BFS)
+// ────────────────────────────────────────────────────────────────
+function computePureKeyTrades() {
+  // Alvo de cada jogador (rotação)
+  const target = {
+    left:   base['right'],
+    middle: base['left'],
+    right:  base['middle']
+  };
+
+  // Estátuas precisam ser distintas (regra Chave Pura)
+  if (new Set(Object.values(target)).size !== 3) {
+    return { error: 'duplicate-statues' };
+  }
+
+  // Como cada símbolo aparece 2× e cada jogador quer 2 do mesmo símbolo único,
+  // o mapeamento símbolo → destino é determinístico (1-a-1).
+  const destinationOf = {};
+  POS.forEach(pos => { destinationOf[target[pos]] = pos; });
+
+  // Pool: cada token de parede com seu dono atual
+  const pool = [];
+  POS.forEach(pos => walls(pos).forEach(s => pool.push({ symbol: s, owner: pos })));
+
+  // Para cada token:
+  //   - owner != destino → troca direta
+  //   - owner == destino (self-loop) → roteia via um intermediário, em 2 passos
+  // O intermediário alterna entre os candidatos para distribuir tráfego.
+  const trades = [];
+  let intermediaryIdx = 0;
+  pool.forEach(({ symbol, owner }) => {
+    const dest = destinationOf[symbol];
+    if (owner !== dest) {
+      trades.push({ from: owner, to: dest, symbol, kind: 'direct' });
+    } else {
+      const candidates = POS.filter(p => p !== owner);
+      const intermediary = candidates[intermediaryIdx % candidates.length];
+      intermediaryIdx++;
+      trades.push({ from: owner,        to: intermediary, symbol, kind: 'route'  });
+      trades.push({ from: intermediary, to: dest,         symbol, kind: 'return' });
     }
+  });
 
-    const shapeNames = ['Esfera', 'Cubo', 'Pirâmide', 'Cone', 'Cilindro', 'Prisma'];
-    const statuePositions = ['left', 'middle', 'right'];
-    const statueLabels = { left: 'Esquerda', middle: 'Centro', right: 'Direita' };
+  return { target, trades };
+}
 
-    // Estado da seleção visual dos símbolos 2D (apenas um por posição, sem repetir)
-    let selectedSymbols = { left: null, middle: null, right: null };
+function renderResult() {
+  const el = document.getElementById('resultContent');
 
-    function onSymbolClick(pos, shape) {
-        if (selectedSymbols[pos] === shape) {
-            selectedSymbols[pos] = null;
-        } else {
-            // Desmarca o mesmo símbolo em outra posição se já estiver selecionado
-            for (const p of statuePositions) {
-                if (selectedSymbols[p] === shape) {
-                    selectedSymbols[p] = null;
-                }
-            }
-            selectedSymbols[pos] = shape;
-        }
-        updateSymbolSelectors();
+  if(!isValid()) {
+    const c = countWalls();
+    let msg = 'Selecione as formas acima para gerar o passo a passo...';
+    if(POS.some(p=>!base[p])) msg = 'Selecione as 3 estátuas...';
+    else if(POS.some(p=>walls(p).length<2)) msg = 'Selecione 2 símbolos de parede por jogador...';
+    else msg = 'Ajuste os símbolos — cada forma deve aparecer exatamente 2× nas paredes...';
+    el.innerHTML = `<div class="wait-state">
+      <span class="wait-icon">🔑</span>${msg}
+      <small>${svg2D('circle',16)} ${c.circle}/2 ${svg2D('square',16)} ${c.square}/2 ${svg2D('triangle',16)} ${c.triangle}/2</small>
+    </div>`;
+    return;
+  }
+
+  const result = computePureKeyTrades();
+
+  if (!result) {
+    el.innerHTML = '<div class="alert-box warn">⚠️ Não foi possível calcular uma sequência de trocas.</div>';
+    return;
+  }
+  if (result.error === 'duplicate-statues') {
+    el.innerHTML = '<div class="alert-box warn">⚠️ <strong>Estátuas inválidas para Chave Pura:</strong> as três estátuas precisam ser distintas (uma de cada forma). Ajuste as estátuas para continuar.</div>';
+    return;
+  }
+
+  const { target, trades } = result;
+
+  // Ordem externa
+  const externOrder = POS.map(p => target[p]).sort().map(s => ABBR[s]).join('');
+  const externCall = {
+    'CQS': 'TT SS CC',
+    'CSQ': 'TT CC SS',
+    'QCS': 'SS TT CC',
+    'QSC': 'SS CC TT',
+    'SQC': 'CC SS TT',
+    'SCQ': 'CC TT SS'
+  };
+  const externString = externCall[externOrder] || 'TT SS CC';
+
+  // Agrupa trades consecutivos por (from, to, kind) — preserva ordem e mantém
+  // roteamento/devolução adjacentes para o jogador acompanhar o "caminho" do símbolo.
+  const grouped = [];
+  trades.forEach(t => {
+    const last = grouped[grouped.length - 1];
+    if (last && last.from === t.from && last.to === t.to && last.kind === t.kind) {
+      last.symbols.push(t.symbol);
+    } else {
+      grouped.push({ from: t.from, to: t.to, kind: t.kind, symbols: [t.symbol] });
     }
+  });
 
-    function updateSymbolSelectors() {
-        statuePositions.forEach(pos => {
-            const dots = document.querySelectorAll(`#sym-${pos} .shape-dot`);
-            dots.forEach(dot => {
-                const shape = dot.dataset.shape;
-                const isSelected = selectedSymbols[pos] === shape;
-                const isUsedElsewhere = Object.entries(selectedSymbols).some(([p, s]) => p !== pos && s === shape);
-                dot.classList.toggle('selected', isSelected);
-                dot.classList.toggle('locked', isUsedElsewhere && !isSelected);
-            });
-        });
+  let h = '';
+  h += `<div class="alert-box gold">🔑 <strong>CHAVE PURA — Desafio</strong><br>
+    <span style="font-size:.85rem">Rotação aplicada. Cada jogador sai com 2 símbolos iguais à forma rotacionada. NENHUM símbolo inicial permanece.</span></div>`;
+
+  h += '<div class="rsec"><div class="rsec-title">Configuração Inicial</div>';
+  h += '<div class="config-grid">';
+  POS.forEach(pos => {
+    h += `<div class="config-card">
+      <div class="player-label">P${PNUM[pos]} · ${LABEL[pos]}</div>
+      <div>🗿 ${svg2D(base[pos],20)} ${B(base[pos])}</div>
+      <div style="margin-top:4px;color:var(--text-dim);font-size:.78rem">🧱 ${walls(pos).map(s=>IS(s)+B(s)).join(' ')}</div>
+      <div class="target-line">➤ Alvo (rotação): <span class="badge badge-pure">${NAME[target[pos]]} ×2</span></div>
+    </div>`;
+  });
+  h += '</div></div>';
+
+  h += '<div class="rsec"><div class="rsec-title">Resumo dos Jogadores</div><div class="summary-block">';
+  POS.forEach(pos => {
+    h += `<div class="summary-row">
+      <span class="pos">P${PNUM[pos]} ${LABEL[pos]}</span>
+      ${svg2D(base[pos],22)} ${B(base[pos])}
+      <span class="arrow">·</span>
+      <span style="color:var(--text-dim);font-size:.82rem">Paredes:</span>
+      ${walls(pos).map(s=>IS(s)+B(s)).join('')}
+      <span class="arrow">→</span>
+      <span class="badge badge-pure">${NAME[target[pos]]} ×2</span>
+    </div>`;
+  });
+  h += '</div></div>';
+
+  h += '<div class="rsec"><div class="rsec-title">1ª Rodada (Interna) — Trocas</div>';
+
+  if (grouped.length === 0) {
+    h += '<div class="alert-box ok">✅ Nenhuma troca necessária!</div>';
+  } else {
+    const hasRouting = grouped.some(g => g.kind === 'route' || g.kind === 'return');
+    if (hasRouting) {
+      h += '<div class="alert-box info">🔁 <strong>Roteamento:</strong> um ou mais símbolos precisam sair do dono original e voltar (regra Chave Pura). Os passos marcados como <strong>roteamento</strong> e <strong>devolução</strong> formam o caminho do mesmo símbolo.</div>';
     }
+    h += `<div class="trade-block"><p style="font-size:.75rem;color:var(--text-dim);margin-bottom:10px;">${grouped.length} movimento(s):</p>`;
+    h += '<ol class="steps">';
+    grouped.forEach(g => {
+      const symbolsList = g.symbols.map(s => `${IS(s)} ${B(s)}`).join(' + ');
+      let kindBadge = '';
+      if (g.kind === 'route')  kindBadge = '<span class="badge badge-route">🔁 roteamento</span>';
+      else if (g.kind === 'return') kindBadge = '<span class="badge badge-return">↩️ devolução</span>';
+      h += `<li>
+        <strong>P${PNUM[g.from]} (${LABEL[g.from]})</strong>
+        →
+        <strong>P${PNUM[g.to]} (${LABEL[g.to]})</strong>: ${symbolsList} ${kindBadge}
+      </li>`;
+    });
+    h += '</ol></div>';
+  }
+  h += '</div>';
 
-    function buildStatueSelectors() {
-        const container = document.getElementById('statueInputs');
-        let html = '';
-        statuePositions.forEach(pos => {
-            html += `
-            <div class="statue-card">
-                <h3>${statueLabels[pos]}</h3>
-                <div id="sym-${pos}" class="shape-selector">
-                    <div class="shape-dot circle" data-shape="circle" onclick="onSymbolClick('${pos}', 'circle')">${icon2D.circle}</div>
-                    <div class="shape-dot square" data-shape="square" onclick="onSymbolClick('${pos}', 'square')">${icon2D.square}</div>
-                    <div class="shape-dot triangle" data-shape="triangle" onclick="onSymbolClick('${pos}', 'triangle')">${icon2D.triangle}</div>
-                </div>
-                <label style="color:var(--text-dim); font-size:0.8rem;">Forma Atual</label>
-                <select id="current-${pos}">
-                    ${shapeNames.map(s => `<option value="${s}">${shapeOptionText(s)}</option>`).join('')}
-                </select>
-                <label style="color:var(--text-dim); font-size:0.8rem;">Forma Alvo</label>
-                <select id="target-${pos}">
-                    ${shapeNames.map(s => `<option value="${s}">${shapeOptionText(s)}</option>`).join('')}
-                </select>
-            </div>`;
-        });
-        container.innerHTML = html;
-        updateSymbolSelectors();
-    }
+  h += '<div class="rsec"><div class="rsec-title">2ª Rodada (Externa) — Dobrar</div>';
+  h += `<div class="alert-box ok">✅ <strong>Ordem Externa:</strong> ${externString}<br>
+    <small>Com base na configuração atual, os externos devem ter estas duplas prontas.</small></div>`;
+  h += `<p style="font-size:0.8rem;color:var(--text-dim);">Internos: cada um deve juntar dois símbolos iguais ao seu alvo rotacionado.<br>
+  </p>`;
+  h += '</div>';
 
-    function get2D(shapeName) {
-        return [...shape3DComponents[shapeName]];
-    }
+  h += '<div class="rsec"><div class="rsec-title">Resultado Final</div>';
+  h += '<div class="summary-block">';
+  POS.forEach(pos => {
+    const arr = [target[pos], target[pos]];
+    h += `<div class="summary-row">
+      <span class="pos">P${PNUM[pos]} ${LABEL[pos]}</span>
+      <span style="color:var(--text-dim);font-size:.82rem">Ficou com:</span>
+      ${arr.map(s=>IS(s)+B(s)).join(' ')}
+      <span style="color:var(--success);font-size:.8rem">✓</span>
+    </div>`;
+  });
+  h += '</div></div>';
 
-    // BFS apenas com swaps (troca direta entre duas estátuas)
-    function dissectionBFS(startState, targetState) {
-        const start = startState.map(arr => [...arr]);
-        const target = targetState.map(arr => [...arr]);
+  h += `<div class="rsec"><div class="rsec-title">Regras da Chave Pura</div>
+    <div class="alert-box ok">✅ 
+      <strong>Chave Pura:</strong> Cada jogador fica com 2 símbolos iguais à forma rotacionada (≠ estátua original).<br>
+      🚫 <strong>Nunca</strong> depositar na própria estátua.<br>
+      🔄 Todos os símbolos iniciais saem dos donos originais.
+    </div></div>`;
 
-        function isGoal(state) {
-            for (let i = 0; i < 3; i++) {
-                if (state[i].length !== 2) return false;
-                const sorted = [...state[i]].sort().join(',');
-                const targetSorted = [...target[i]].sort().join(',');
-                if (sorted !== targetSorted) return false;
-            }
-            return true;
-        }
+  el.innerHTML = h;
+}
 
-        function stateKey(state) {
-            return state.map(arr => [...arr].sort().join(',')).join('|');
-        }
-
-        let queue = [[start, []]];
-        let visited = new Set();
-        const maxDepth = 8;
-
-        while (queue.length > 0) {
-            let [cur, path] = queue.shift();
-            if (path.length > maxDepth) continue;
-            if (isGoal(cur)) return path;
-
-            let key = stateKey(cur);
-            if (visited.has(key)) continue;
-            visited.add(key);
-
-            for (let a = 0; a < 3; a++) {
-                for (let b = a + 1; b < 3; b++) {
-                    const uniqueA = [...new Set(cur[a])];
-                    const uniqueB = [...new Set(cur[b])];
-                    for (let symA of uniqueA) {
-                        for (let symB of uniqueB) {
-                            if (symA === symB) continue;
-                            let newState = cur.map(arr => [...arr]);
-                            let idxA = newState[a].indexOf(symA);
-                            newState[a].splice(idxA, 1);
-                            newState[a].push(symB);
-                            let idxB = newState[b].indexOf(symB);
-                            newState[b].splice(idxB, 1);
-                            newState[b].push(symA);
-                            let newPath = [...path, { 
-                                type: 'swap', 
-                                from: statuePositions[a], 
-                                to: statuePositions[b], 
-                                symbolA: symA, 
-                                symbolB: symB 
-                            }];
-                            queue.push([newState, newPath]);
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    function calculateDissection() {
-        const startState = statuePositions.map(pos => get2D(document.getElementById(`current-${pos}`).value));
-        const targetState = statuePositions.map(pos => get2D(document.getElementById(`target-${pos}`).value));
-
-        const path = dissectionBFS(startState, targetState);
-        const resultDiv = document.getElementById('resultBox');
-
-        if (!path) {
-            resultDiv.innerHTML = `<div class="alert warn">
-                ⚠️ Não foi possível encontrar uma sequência de dissecações. Verifique as formas.
-            </div>`;
-            return;
-        }
-
-        if (path.length === 0) {
-            resultDiv.innerHTML = `<div class="alert success">✅ As estátuas já estão nas formas corretas!</div>`;
-            return;
-        }
-
-        let html = `<h3 style="color:var(--gold); margin-bottom:12px;">Dissecações Necessárias (${path.length} passos)</h3>`;
-        html += '<ol class="step-list">';
-        path.forEach(step => {
-            if (step.type === 'swap') {
-                const iconA = icon2D[step.symbolA];
-                const nameA = name2D[step.symbolA];
-                const iconB = icon2D[step.symbolB];
-                const nameB = name2D[step.symbolB];
-                html += `<li>
-                    <strong>Trocar</strong> <span class="shape-icon">${iconA}</span> <span class="tag ${step.symbolA}">${nameA}</span> da Estátua ${statueLabels[step.from]} 
-                    com <span class="shape-icon">${iconB}</span> <span class="tag ${step.symbolB}">${nameB}</span> da Estátua ${statueLabels[step.to]}
-                </li>`;
-            }
-        });
-        html += '</ol>';
-        resultDiv.innerHTML = html;
-    }
-
-    buildStatueSelectors();
+buildCards();
+update();
 </script>
 </body>
 </html>
