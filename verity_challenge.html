@@ -473,7 +473,7 @@ function renderResult() {
   h += '</div></div>';
 
   h += '<div class="rsec"><div class="rsec-title">1ª Rodada (Interna) — Trocas</div>';
-  h += '<div class="alert-box info">💡 <strong>Regra do Desafio:</strong> Nunca deposite na sua própria estátua.</div>';
+  h += '<div class="alert-box info">💡 <strong>ATENÇÃO:</strong> Caso aparecer P[x] > P[x], passar o símbolo para outro jogador e pedir para depositar novamente na sua estátua.</div>';
 
   if (grouped.size === 0) {
     h += '<div class="alert-box ok">✅ Nenhuma troca necessária!</div>';
@@ -497,7 +497,7 @@ function renderResult() {
   h += `<div class="alert-box ok">✅ <strong>Ordem Externa:</strong> ${externString}<br>
     <small>Com base na configuração atual, os externos devem ter estas duplas prontas.</small></div>`;
   h += `<p style="font-size:0.8rem;color:var(--text-dim);">Internos: cada um deve juntar dois símbolos iguais ao seu alvo rotacionado.<br>
-  Não mergulhar durante a limpeza! Segure a forma, apenas não a deposite.</p>`;
+  </p>`;
   h += '</div>';
 
   h += '<div class="rsec"><div class="rsec-title">Resultado Final</div>';
