@@ -9,7 +9,7 @@ Calculadora web para auxiliar Guardiões no quarto encontro da raid **Limiar da 
 | Modo | Descrição |
 |------|-----------|
 | 🧩 Normal | Calculadora padrão de trocas entre jogadores internos |
-| 🌟 Triunfo | Igualdade Cósmica — sem depósito na própria estátua |
+| 🌟 Triunfo | Igualdade Cósmica — sem repetir o depósito na mesma estátua |
 | 👑 Desafio Mestre | Chave Pura — Somente segundo encontro |
 | 🔀 Dissecação Externa | Calculadora padrão e do desafio do lado de fora |
 
